@@ -1,0 +1,193 @@
+--周滔 2014-10-09 报名设置 表创建
+create table WX_REGISSET
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  attention    CHAR(1) default 'Y' not null,
+  template     VARCHAR2(100) not null,
+  controljson  VARCHAR2(2000) not null,
+  confirm      VARCHAR2(300),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_REGISSET add primary key (ID);
+
+--周滔 2014-10-09 报名内容键入 表创建
+create table WX_REGISCONTROL
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  key          VARCHAR2(100) not null,
+  type         VARCHAR2(100) not null,
+  optional     VARCHAR2(100),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null,
+  required     CHAR(1) not null,
+  ifmodify     CHAR(1) not null,
+  checktype    VARCHAR2(100)
+)
+alter table WX_REGISCONTROL add primary key (ID);
+--报名设置数据
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (1, 37, 27, '姓名', 'MD1', 'text', null, 893, 893, to_date('17-09-2014 13:31:12', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:57', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (2, 37, 27, '手机号码', 'MD2', 'text', null, 893, 893, to_date('17-09-2014 13:31:49', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:50', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'phone');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (3, 37, 27, '照片', 'MD3', 'image', null, 893, 893, to_date('17-09-2014 13:35:28', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (4, 37, 27, '性别', 'MD4', 'select', '男/女', 893, 893, to_date('17-09-2014 13:37:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:37:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (5, 37, 27, '出生年月', 'MD5', 'datetime', null, 893, 893, to_date('17-09-2014 13:38:47', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'datetime');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (6, 37, 27, '年龄', 'MD6', 'text', null, 893, 893, to_date('17-09-2014 13:41:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'number');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (7, 37, 27, '城市', 'MD7', 'address', null, 893, 893, to_date('17-09-2014 13:41:58', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'address');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (8, 37, 27, '企业名称', 'MD10', 'text', null, 893, 893, to_date('17-09-2014 13:44:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (9, 37, 27, '地址', 'MD8', 'text', null, 893, 893, to_date('17-09-2014 13:42:25', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:07', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (10, 37, 27, '行业', 'MD9', 'text', null, 893, 893, to_date('17-09-2014 13:43:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:25', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (11, 37, 27, '职位', 'MD11', 'text', null, 893, 893, to_date('17-09-2014 13:46:07', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:16', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (12, 37, 27, '邮箱', 'MD12', 'text', null, 893, 893, to_date('17-09-2014 13:46:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:01', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'email');
+
+--周滔 2014-10-09 邀请函模板 表创建
+create table WX_INVITATIONTEMP
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  foldername   VARCHAR2(100) not null,
+  photo        VARCHAR2(250) not null,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_INVITATIONTEMP add primary key (ID);
+--邀请函模板数据
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (1, 37, 27, '清新简约版', '102', '/html/nds/oto/webapp/invitation/tempImage/102.jpg', 893, 893, to_date('17-09-2014 13:35:45', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:06', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (2, 37, 27, '时尚商务版', '101', '/html/nds/oto/webapp/invitation/tempImage/101.jpg', 893, 893, to_date('17-09-2014 13:38:48', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+--周滔 2014-10-09 邀请函 表创建
+create table WX_INVITATION
+(
+  id                   NUMBER(10) not null,
+  ad_client_id         NUMBER(10),
+  ad_org_id            NUMBER(10),
+  photo                VARCHAR2(250),
+  wx_regisset_id       NUMBER(10),
+  theme                VARCHAR2(100) not null,
+  starttime            DATE not null,
+  location             VARCHAR2(250) not null,
+  endtime              DATE not null,
+  organizers           VARCHAR2(100) not null,
+  introduction         VARCHAR2(500) not null,
+  ownerid              NUMBER(10),
+  modifierid           NUMBER(10),
+  creationdate         DATE,
+  modifieddate         DATE,
+  isactive             CHAR(1) default 'Y' not null,
+  wx_invitationtemp_id NUMBER(10)
+)
+alter table WX_INVITATION add primary key (ID);
+alter table WX_INVITATION add constraint WX_INVITATION_WX_INVITATI_FK1 foreign key (WX_INVITATIONTEMP_ID) references WX_INVITATIONTEMP (ID) on delete set null;
+alter table WX_INVITATION add constraint WX_INVITATION_WX_REGISSET_FK1 foreign key (WX_REGISSET_ID) references WX_REGISSET (ID) on delete set null;
+
+--周滔 2014-10-09 微杂志 表创建
+create table WX_MAGAZINE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  describe     VARCHAR2(100) not null,
+  color        VARCHAR2(100) not null,
+  bgphoto      VARCHAR2(250) not null,
+  homestate    CHAR(1) default 'N',
+  musicstate   CHAR(1) default 'N',
+  bgmusic      VARCHAR2(250),
+  loop         CHAR(1) default 'N',
+  homephoto    VARCHAR2(250) not null,
+  cleanstate   CHAR(1) default 'N',
+  cleanphoto   VARCHAR2(250),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINE add primary key (ID);
+
+--周滔 2014-10-09 微杂志过场图片 表创建
+create table WX_MAGAZINEIMAGE
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10),
+  photo          VARCHAR2(250) not null,
+  page           NUMBER(10) not null,
+  anchorstate    CHAR(1) default 'N',
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINEIMAGE add primary key (ID);
+alter table WX_MAGAZINEIMAGE add constraint FK_WX_MAGAZINEIMAGE_113669 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+--周滔 2014-10-09 微杂志锚点 表创建
+create table WX_MAGAZINEANCHOR
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10) not null,
+  anchor         VARCHAR2(500) not null,
+  page           NUMBER(10) not null,
+  fromid         VARCHAR2(100),
+  objectid       VARCHAR2(100),
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINEANCHOR add primary key (ID);
+alter table WX_MAGAZINEANCHOR add constraint FK_WX_MAGAZINEANCHOR_113674 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+--周滔 2014-10-22 修改群发bug（VIP值过多，字符串溢出）
+--新增一张表WX_NOTIFYTEMP（群发VIP临时表）只有一个字段 next99已经更新
+
+--周滔 2014-10-27 整理菜单和微应用
+delete from wx_app t where t.id in(3,5,6,7,8,10,11,12,13,14,15,16,17,18,19,39,42);
+update wx_app t set t.url = 'http://www.shujinwang.com/' where t.id = 35;
