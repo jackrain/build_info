@@ -1,0 +1,465 @@
+--add by paco begin
+--会员信息表中新增验证码字段
+alter table WX_VIP add VERIFYCODE varchar2(10);
+
+--商品表中新增图片集字段，通过AC/AM插入到商品图片集表中
+alter table WX_APPENDGOODS add productpics clob;
+
+--官网增加访问量字段
+alter table WX_SETINFO add visitnumber number(10) default 0;
+
+--WX_VIP表增加省市区字段
+alter table WX_VIP add province VARCHAR2(50);
+alter table WX_VIP add city VARCHAR2(50);
+alter table WX_VIP add area VARCHAR2(50);
+
+--WX_ORDER添加支付金额字段，并修改已支付订单的支付金额
+alter table WX_ORDER add paymoney number(16,2);
+update wx_order o set o.paymoney=o.tot_amt where o.status in(3,4,5,7,8);
+
+--修改表的扩展属性字段的长度（255-》1000）
+alter table AD_TABLE modify props VARCHAR2(1000);
+
+--短信充值增加是否开票字段
+alter table WX_RECHARGERECORD add ismakeout char(1) default 'N' not null;
+
+--多图文头表
+create table WX_TOWXMESSAGE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  messagetype  VARCHAR2(255),
+  messagecount NUMBER(10),
+  title        VARCHAR2(255),
+  content      CLOB,
+  description  VARCHAR2(1000),
+  url          VARCHAR2(255),
+  hurl         VARCHAR2(255),
+  thumbnail    VARCHAR2(255),
+  fromid       NUMBER(10),
+  objid        VARCHAR2(500),
+  contentjson  CLOB,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_TOWXMESSAGE add primary key (ID);
+
+--多图文明细表
+create table WX_TOWXMESSAGEITEM
+(
+  id                NUMBER(10) not null,
+  ad_client_id      NUMBER(10),
+  ad_org_id         NUMBER(10),
+  wx_towxmessage_id NUMBER(10),
+  author            VARCHAR2(255),
+  picurl            VARCHAR2(255),
+  tourl             VARCHAR2(255),
+  thumbnail         VARCHAR2(255),
+  content           VARCHAR2(255),
+  description       VARCHAR2(255),
+  isshowcover       VARCHAR2(255),
+  fromid            NUMBER(10),
+  objid             VARCHAR2(500),
+  sort              VARCHAR2(255),
+  ownerid           NUMBER(10),
+  modifierid        NUMBER(10),
+  creationdate      DATE,
+  modifieddate      DATE,
+  isactive          CHAR(1) default 'Y' not null
+)
+alter table WX_TOWXMESSAGEITEM add primary key (ID);
+alter table WX_TOWXMESSAGEITEM 
+add constraint FK_WX_TOWXMESSAGEITEM_114525 foreign key (WX_TOWXMESSAGE_ID)
+references WX_TOWXMESSAGE (ID) on delete set null;
+
+
+--新增群发/单发表
+create table WX_NOTIFYRECODE
+(
+  id                NUMBER(10) not null,
+  ad_client_id      NUMBER(10),
+  ad_org_id         NUMBER(10),
+  wx_messgae_id     NUMBER(10),
+  wx_towxmessage_id NUMBER(10),
+  massopenid        CLOB not null,
+  senddate          DATE,
+  type              CHAR(1) not null,
+  state             CHAR(1) default 'N',
+  content           CLOB,
+  ownerid           NUMBER(10),
+  modifierid        NUMBER(10),
+  creationdate      DATE,
+  modifieddate      DATE,
+  isactive          CHAR(1) default 'Y' not null
+)
+alter table WX_NOTIFYRECODE
+  add primary key (ID);
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114477 foreign key (WX_TOWXMESSAGE_ID)
+  references WX_TOWXMESSAGE (ID) on delete set null;
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114482 foreign key (WX_MESSGAE_ID)
+  references WX_MESSGAE (ID) on delete set null;
+
+--修改短信充值记录表
+alter table WX_RECHARGERECORD modify money not null;			--充值金额
+alter table WX_RECHARGERECORD add smsnumber NUMBER(10);			--充值短信数量
+alter table WX_RECHARGERECORD add state VARCHAR2(20) default 'WAIT_BUYER_PAY';	--记录状态
+alter table WX_RECHARGERECORD add docno VARCHAR2(100);			--记录单号
+alter table WX_RECHARGERECORD add platformid VARCHAR2(100);		--平台号
+alter table WX_RECHARGERECORD add platformno VARCHAR2(100);		--平台单号
+alter table WX_RECHARGERECORD modify creationdate default sysdate;	--创建时间
+alter table WX_RECHARGERECORD modify modifieddate default sysdate;	--修改时间
+alter table WX_RECHARGERECORD add ismakeout CHAR(1) default 'Y' not null;	--是否开票
+
+--券核销
+create table WX_CANCELCOUPON
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  docno        VARCHAR2(100) not null,
+  wx_store_id  NUMBER(10),
+  status       NUMBER(10) default 1,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table WX_CANCELCOUPON
+  add primary key (ID);
+alter table WX_CANCELCOUPON
+  add constraint FK_WX_CANCELCOUPON_113822 foreign key (WX_STORE_ID)
+  references WX_STORE (ID) on delete set null;
+-- Create/Recreate indexes 
+create unique index AK_WX_CANCELCOUPON on WX_CANCELCOUPON (DOCNO, AD_CLIENT_ID);
+create index IX_WX_CANCELCOUPON_01 on WX_CANCELCOUPON (STATUS);
+
+
+
+--这个是是否使用短信验证的加字段的语句
+alter table WEB_CLIENT add ismesauth char(1) default 'N' not null;
+
+/*
+the scratchticket tables,
+		design by   : DB_YPF
+		design date : 2014-11-12
+		copyright   : burgeon/the mobile large-data department
+*/
+--drop the constraints
+ALTER TABLE WX_SCRATCHREWARD
+DROP CONSTRAINT FK_WX_SCRATCHREWARD_TICKET;
+
+ALTER TABLE WX_SCRATCHREWARD
+DROP CONSTRAINT FK_WX_SCRATCHREWARD_COUPON;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_CHTICKETNOTE_TICKET;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_TICKETNOTE_VIP;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_TICKETNOTE_REWARD;
+
+--create tables;
+DROP TABLE WX_SCRATCHTICKET PURGE;
+CREATE TABLE WX_SCRATCHTICKET(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    NAME			VARCHAR2(100)		NOT NULL ,
+    STARTTIME			DATE			NOT NULL ,
+    ENDTIME			DATE			NOT NULL ,
+    AREAPHOTO			VARCHAR2(500)		NOT NULL ,
+    BACKPHOTO			VARCHAR2(500)		NOT NULL ,
+    DRAWTYPE			CHAR(3)			NOT NULL ,
+    WHODRAW			CHAR(3)			NOT NULL ,
+    MAXTIMES			NUMBER(10)		NOT NULL ,
+    REPEATREPLY			VARCHAR2(100)		NOT NULL ,
+    NOREWARDPROMPT		VARCHAR2(150)		NOT NULL ,
+    STARTDECLARE		CLOB			NOT NULL ,
+    EXPIRYDECLARE		CLOB			NOT NULL ,
+    ENDDECLARE			VARCHAR2(500)		NOT NULL ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHTICKET_ID_PK PRIMARY KEY (ID)
+);
+
+DROP TABLE WX_SCRATCHREWARD PURGE;
+CREATE TABLE WX_SCRATCHREWARD(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    WX_SCRATCHTICKET_ID		NUMBER(10)		NOT NULL ,
+    REWARDDEGREE		VARCHAR2(50)		NOT NULL ,
+    REWARDTYPE			CHAR(3)			NOT NULL ,
+    GIVEOUTTYPE			CHAR(3)			NOT NULL ,
+    WX_COUPON_ID		NUMBER(10)			 ,
+    INTEGRAL			NUMBER(10)			 ,
+    REWARDNAME			VARCHAR2(500)		NOT NULL ,
+    REWARDCOUNT			NUMBER(10)		NOT NULL ,
+    REWARDRATE			NUMBER(10,8)		NOT NULL ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHREWARD_ID_PK PRIMARY KEY (ID)
+);
+
+DROP TABLE WX_SCRATCHTICKET_NOTE PURGE;
+CREATE TABLE WX_SCRATCHTICKET_NOTE(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    WX_SCRATCHTICKET_ID		NUMBER(10)		NOT NULL ,
+    WX_VIP_ID			NUMBER(10)			 ,
+    COUPONNO			VARCHAR2(100)			 ,
+    COUPONISUSED		CHAR(1)				 ,
+    RECEIVE_STATE		CHAR(1)			NOT NULL ,
+    RECEIVETIME			DATE				 ,
+    WX_SCRATCHREWARD_ID		NUMBER(10)			 ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHTICKET_NOTE_ID_PK PRIMARY KEY (ID)
+);
+
+--create constraints
+ALTER TABLE WX_SCRATCHREWARD 
+ADD CONSTRAINT FK_WX_SCRATCHREWARD_TICKET FOREIGN KEY (WX_SCRATCHTICKET_ID)
+REFERENCES WX_SCRATCHTICKET(ID);
+
+ALTER TABLE WX_SCRATCHREWARD 
+ADD CONSTRAINT FK_WX_SCRATCHREWARD_COUPON FOREIGN KEY (WX_COUPON_ID)
+REFERENCES WX_COUPON(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_CHTICKETNOTE_TICKET FOREIGN KEY (WX_SCRATCHTICKET_ID)
+REFERENCES WX_SCRATCHTICKET(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_TICKETNOTE_VIP FOREIGN KEY (WX_VIP_ID)
+REFERENCES WX_VIP(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_TICKETNOTE_REWARD FOREIGN KEY (WX_SCRATCHREWARD_ID)
+REFERENCES WX_SCRATCHREWARD(ID);
+--add by paco end
+
+--add by zhoutao  begin
+--周滔 2014-10-09 报名设置 表创建
+create table WX_REGISSET
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  attention    CHAR(1) default 'Y' not null,
+  template     VARCHAR2(100) not null,
+  controljson  VARCHAR2(2000) not null,
+  confirm      VARCHAR2(300),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_REGISSET add primary key (ID);
+
+--周滔 2014-10-09 报名内容键入 表创建
+create table WX_REGISCONTROL
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  key          VARCHAR2(100) not null,
+  type         VARCHAR2(100) not null,
+  optional     VARCHAR2(100),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null,
+  required     CHAR(1) not null,
+  ifmodify     CHAR(1) not null,
+  checktype    VARCHAR2(100)
+)
+alter table WX_REGISCONTROL add primary key (ID);
+--报名设置数据
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (1, 37, 27, '姓名', 'MD1', 'text', null, 893, 893, to_date('17-09-2014 13:31:12', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:57', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (2, 37, 27, '手机号码', 'MD2', 'text', null, 893, 893, to_date('17-09-2014 13:31:49', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:50', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'phone');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (3, 37, 27, '照片', 'MD3', 'image', null, 893, 893, to_date('17-09-2014 13:35:28', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (4, 37, 27, '性别', 'MD4', 'select', '男/女', 893, 893, to_date('17-09-2014 13:37:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:37:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (5, 37, 27, '出生年月', 'MD5', 'datetime', null, 893, 893, to_date('17-09-2014 13:38:47', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'datetime');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (6, 37, 27, '年龄', 'MD6', 'text', null, 893, 893, to_date('17-09-2014 13:41:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'number');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (7, 37, 27, '城市', 'MD7', 'address', null, 893, 893, to_date('17-09-2014 13:41:58', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'address');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (8, 37, 27, '企业名称', 'MD10', 'text', null, 893, 893, to_date('17-09-2014 13:44:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (9, 37, 27, '地址', 'MD8', 'text', null, 893, 893, to_date('17-09-2014 13:42:25', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:07', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (10, 37, 27, '行业', 'MD9', 'text', null, 893, 893, to_date('17-09-2014 13:43:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:25', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (11, 37, 27, '职位', 'MD11', 'text', null, 893, 893, to_date('17-09-2014 13:46:07', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:16', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (12, 37, 27, '邮箱', 'MD12', 'text', null, 893, 893, to_date('17-09-2014 13:46:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:01', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'email');
+
+--周滔 2014-10-09 邀请函模板 表创建
+create table WX_INVITATIONTEMP
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  foldername   VARCHAR2(100) not null,
+  photo        VARCHAR2(250) not null,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_INVITATIONTEMP add primary key (ID);
+--邀请函模板数据
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (1, 37, 27, '清新简约版', '102', '/html/nds/oto/webapp/invitation/tempImage/102.jpg', 893, 893, to_date('17-09-2014 13:35:45', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:06', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (2, 37, 27, '时尚商务版', '101', '/html/nds/oto/webapp/invitation/tempImage/101.jpg', 893, 893, to_date('17-09-2014 13:38:48', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+--周滔 2014-10-09 邀请函 表创建
+create table WX_INVITATION
+(
+  id                   NUMBER(10) not null,
+  ad_client_id         NUMBER(10),
+  ad_org_id            NUMBER(10),
+  photo                VARCHAR2(250),
+  wx_regisset_id       NUMBER(10),
+  theme                VARCHAR2(100) not null,
+  starttime            DATE not null,
+  location             VARCHAR2(250) not null,
+  endtime              DATE not null,
+  organizers           VARCHAR2(100) not null,
+  introduction         VARCHAR2(500) not null,
+  ownerid              NUMBER(10),
+  modifierid           NUMBER(10),
+  creationdate         DATE,
+  modifieddate         DATE,
+  isactive             CHAR(1) default 'Y' not null,
+  wx_invitationtemp_id NUMBER(10)
+)
+alter table WX_INVITATION add primary key (ID);
+alter table WX_INVITATION add constraint WX_INVITATION_WX_INVITATI_FK1 foreign key (WX_INVITATIONTEMP_ID) references WX_INVITATIONTEMP (ID) on delete set null;
+alter table WX_INVITATION add constraint WX_INVITATION_WX_REGISSET_FK1 foreign key (WX_REGISSET_ID) references WX_REGISSET (ID) on delete set null;
+
+--周滔 2014-10-09 微杂志 表创建
+create table WX_MAGAZINE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  describe     VARCHAR2(100) not null,
+  color        VARCHAR2(100) not null,
+  bgphoto      VARCHAR2(250) not null,
+  homestate    CHAR(1) default 'N',
+  musicstate   CHAR(1) default 'N',
+  bgmusic      VARCHAR2(250),
+  loop         CHAR(1) default 'N',
+  homephoto    VARCHAR2(250) not null,
+  cleanstate   CHAR(1) default 'N',
+  cleanphoto   VARCHAR2(250),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINE add primary key (ID);
+
+--周滔 2014-10-09 微杂志过场图片 表创建
+create table WX_MAGAZINEIMAGE
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10),
+  photo          VARCHAR2(250) not null,
+  page           NUMBER(10) not null,
+  anchorstate    CHAR(1) default 'N',
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINEIMAGE add primary key (ID);
+alter table WX_MAGAZINEIMAGE add constraint FK_WX_MAGAZINEIMAGE_113669 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+--周滔 2014-10-09 微杂志锚点 表创建
+create table WX_MAGAZINEANCHOR
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10) not null,
+  anchor         VARCHAR2(500) not null,
+  page           NUMBER(10) not null,
+  fromid         VARCHAR2(100),
+  objectid       VARCHAR2(100),
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+)
+alter table WX_MAGAZINEANCHOR add primary key (ID);
+alter table WX_MAGAZINEANCHOR add constraint FK_WX_MAGAZINEANCHOR_113674 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+--周滔 2014-10-22 修改群发bug（VIP值过多，字符串溢出）
+--新增一张表WX_NOTIFYTEMP（群发VIP临时表）只有一个字段 next99已经更新
+
+--周滔 2014-10-27 整理菜单和微应用
+delete from wx_app t where t.id in(3,5,6,7,8,10,11,12,13,14,15,16,17,18,19,39,42);
+update wx_app t set t.url = 'http://www.shujinwang.com/' where t.id = 35;
+--add by zhoutao end
