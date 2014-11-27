@@ -191,3 +191,14 @@ alter table WX_MAGAZINEANCHOR add constraint FK_WX_MAGAZINEANCHOR_113674 foreign
 --周滔 2014-10-27 整理菜单和微应用
 delete from wx_app t where t.id in(3,5,6,7,8,10,11,12,13,14,15,16,17,18,19,39,42);
 update wx_app t set t.url = 'http://www.shujinwang.com/' where t.id = 35;
+
+--周滔 2014-11-27 智能绑定修改
+alter table WX_INTERFACESET modify ENCODINGAESKEY VARCHAR2(43) NULL;
+
+--周滔 2014-11-27 修复订单收货地址引用问题
+alter table WX_ORDER add PROVINCE VARCHAR2(50) NULL;
+alter table WX_ORDER add CITY VARCHAR2(50) NULL;
+alter table WX_ORDER add REGIONID VARCHAR2(50) NULL;
+alter table WX_ORDER add ADDRESS VARCHAR2(250) NULL;
+alter table WX_ORDER add NAME VARCHAR2(100) NULL;
+alter table WX_ORDER add PHONENUM VARCHAR2(100) NULL;
