@@ -1,4 +1,4 @@
---add by paco begin
+﻿--add by paco begin
 --会员信息表中新增验证码字段
 alter table WX_VIP add VERIFYCODE varchar2(10);
 
@@ -78,24 +78,26 @@ references WX_TOWXMESSAGE (ID) on delete set null;
 
 
 --新增群发/单发表
-create table WX_NOTIFYRECODE
-(
-  id                NUMBER(10) not null,
-  ad_client_id      NUMBER(10),
-  ad_org_id         NUMBER(10),
-  wx_messgae_id     NUMBER(10),
-  wx_towxmessage_id NUMBER(10),
-  massopenid        CLOB not null,
-  senddate          DATE,
-  type              CHAR(1) not null,
-  state             CHAR(1) default 'N',
-  content           CLOB,
-  ownerid           NUMBER(10),
-  modifierid        NUMBER(10),
-  creationdate      DATE,
-  modifieddate      DATE,
-  isactive          CHAR(1) default 'Y' not null
-)
+CREATE TABLE WX_NOTIFYRECODE(
+    ID NUMBER(10)  NOT NULL ,
+    AD_CLIENT_ID NUMBER(10) ,
+    AD_ORG_ID NUMBER(10) ,
+    WX_MESSGAE_ID NUMBER(10) ,
+    WX_TOWXMESSAGE_ID NUMBER(10) ,
+    MASSOPENID CLOB  NOT NULL ,
+    SENDDATE DATE ,
+    TYPE CHAR(1)  NOT NULL ,
+    STATE CHAR(1)  DEFAULT 'N',
+    CONTENT CLOB ,
+    ERRCOUNT NUMBER(10) ,
+    ERRORLOG VARCHAR(1000) ,
+    OWNERID NUMBER(10) ,
+    MODIFIERID NUMBER(10) ,
+    CREATIONDATE DATE ,
+    MODIFIEDDATE DATE ,
+    ISACTIVE CHAR(1)  DEFAULT 'Y' NOT NULL ,
+    PRIMARY KEY (ID));
+
 alter table WX_NOTIFYRECODE
   add primary key (ID);
 alter table WX_NOTIFYRECODE
