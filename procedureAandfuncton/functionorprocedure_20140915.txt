@@ -1,4 +1,4 @@
-﻿--paco add begin
+﻿--paco add begin  20140915
 -- 2014/9/15 消息群发根据错误次数过滤与修改时间降序
 wx_notify_crowdreply
 
@@ -62,6 +62,9 @@ wx_rqcodemessage_$r_scan
 --2014/9/30订单支付成功后发短信
 wx_order_sendpaysms
 
+--发货成功后返回列表页面
+wx_order_send
+
 --2014/10/13自动任务群发时，如果调用数据库方法异常时修改相应记录的修改时间
 wx_notify_crowdreply
 
@@ -74,7 +77,7 @@ wx_notify_crowdreply
 --2014/11/7修改删除规格明细数据库函数
 WX_SPEC_$R_DELETEITEM
 
---多图片上传功能
+--多图片上传功能 默认规格名称为均码
 wx_appendgoods_ac;
 wx_appendgoods_am;
 wx_v_cost_appendgoods_ac
@@ -83,9 +86,9 @@ wx_v_cost_appendgoods_am
 --获取连接函数
 get_pathurl
 
---paco add end
+--paco add end 20140915
 
---zhoutao add begin
+--zhoutao add begin 20140915
 
 --2014/10/9微报名修改过程
 WX_REGISSET_AM
@@ -111,9 +114,9 @@ wx_address_bd
 --2014/11/27修复订单收货地址外键问题
 wx_order_acm
 
---zhoutao add end
+--zhoutao add end 20140915
 
---huangchunyang add begin
+--huangchunyang add begin 20140915
 
 --2014/10/16显示商城概况信息
 WX_ORDER_$r_GETORDER
@@ -124,7 +127,7 @@ WX_ORDER_$r_GETORDERAMT
 --2014/10/28显示官网概况信息
 WX_ISSUEARTICLE_$r_GETSUM
 
---huangchunyang add end
+--huangchunyang add end 20140915
 
 
 
