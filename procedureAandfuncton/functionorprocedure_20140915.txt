@@ -80,12 +80,14 @@ WX_SPEC_$R_DELETEITEM
 --多图片上传功能 默认规格名称为均码
 wx_appendgoods_ac;
 wx_appendgoods_am;
-wx_v_cost_appendgoods_ac
-wx_v_cost_appendgoods_am
+wx_v_cost_appendgoods_ac;
+wx_v_cost_appendgoods_am;
 
 --获取连接函数
-get_pathurl
+get_pathurl;
 
+--商品视图中添加是否新品
+wx_v_appendgoods;
 --paco add end 20140915
 
 --zhoutao add begin 20140915
