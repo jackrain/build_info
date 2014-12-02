@@ -45,7 +45,7 @@ create table WX_TOWXMESSAGE
   creationdate DATE,
   modifieddate DATE,
   isactive     CHAR(1) default 'Y' not null
-)
+);
 alter table WX_TOWXMESSAGE add primary key (ID);
 
 --多图文明细表
@@ -70,7 +70,7 @@ create table WX_TOWXMESSAGEITEM
   creationdate      DATE,
   modifieddate      DATE,
   isactive          CHAR(1) default 'Y' not null
-)
+);
 alter table WX_TOWXMESSAGEITEM add primary key (ID);
 alter table WX_TOWXMESSAGEITEM 
 add constraint FK_WX_TOWXMESSAGEITEM_114525 foreign key (WX_TOWXMESSAGE_ID)
@@ -271,26 +271,10 @@ REFERENCES WX_SCRATCHREWARD(ID);
 
 -- Add/modify columns  折叠菜单
 alter table AD_ACCORDION add accordion_cls VARCHAR2(200);
---add by paco end
 
---add by zhoutao  begin
---周滔 2014-10-09 报名设置 表创建
-create table WX_REGISSET
-(
-  id           NUMBER(10) not null,
-  ad_client_id NUMBER(10),
-  ad_org_id    NUMBER(10),
-  attention    CHAR(1) default 'Y' not null,
-  template     VARCHAR2(100) not null,
-  controljson  VARCHAR2(2000) not null,
-  confirm      VARCHAR2(300),
-  ownerid      NUMBER(10),
-  modifierid   NUMBER(10),
-  creationdate DATE,
-  modifieddate DATE,
-  isactive     CHAR(1) default 'Y' not null
-)
-alter table WX_REGISSET add primary key (ID);
+--添加默认支付方式
+alter table WX_PAY add ISDEFAULT char(1) default 'Y';
+--add by paco end
 
 --周滔 2014-10-09 报名内容键入 表创建
 create table WX_REGISCONTROL
@@ -310,7 +294,7 @@ create table WX_REGISCONTROL
   required     CHAR(1) not null,
   ifmodify     CHAR(1) not null,
   checktype    VARCHAR2(100)
-)
+);
 alter table WX_REGISCONTROL add primary key (ID);
 --报名设置数据
 insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
@@ -363,7 +347,7 @@ create table WX_INVITATIONTEMP
   creationdate DATE,
   modifieddate DATE,
   isactive     CHAR(1) default 'Y' not null
-)
+);
 alter table WX_INVITATIONTEMP add primary key (ID);
 --邀请函模板数据
 insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
@@ -371,6 +355,67 @@ values (1, 37, 27, '清新简约版', '102', '/html/nds/oto/webapp/invitation/te
 
 insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
 values (2, 37, 27, '时尚商务版', '101', '/html/nds/oto/webapp/invitation/tempImage/101.jpg', 893, 893, to_date('17-09-2014 13:38:48', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+--周滔 2014-11-27 智能绑定修改
+alter table WX_INTERFACESET add ENCODINGAESKEY VARCHAR2(43) NULL;
+
+--周滔 2014-11-27 修复订单收货地址引用问题
+alter table WX_ORDER add PROVINCE VARCHAR2(50) NULL;
+alter table WX_ORDER add CITY VARCHAR2(50) NULL;
+alter table WX_ORDER add REGIONID VARCHAR2(50) NULL;
+alter table WX_ORDER add ADDRESS VARCHAR2(250) NULL;
+alter table WX_ORDER add NAME VARCHAR2(100) NULL;
+alter table WX_ORDER add PHONENUM VARCHAR2(100) NULL;
+
+--周滔 2014-10-09 报名清单
+create table WX_REGISRECORD
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  md1            VARCHAR2(100) not null,
+  md2            VARCHAR2(50) not null,
+  md3            VARCHAR2(250),
+  md4            VARCHAR2(10),
+  md5            DATE,
+  md6            VARCHAR2(10),
+  md7            VARCHAR2(50),
+  md8            VARCHAR2(300),
+  md9            VARCHAR2(100),
+  md10           VARCHAR2(250),
+  md11           VARCHAR2(100),
+  md12           VARCHAR2(100),
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null,
+  formid         VARCHAR2(100),
+  objectid       NUMBER(10),
+  wx_regisset_id NUMBER(10),
+  wx_vip_id      NUMBER(10)
+);
+
+alter table WX_REGISRECORD add primary key (ID)
+
+--add by zhoutao  begin
+--周滔 2014-10-09 报名设置 表创建
+create table WX_REGISSET
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  attention    CHAR(1) default 'Y' not null,
+  template     VARCHAR2(100) not null,
+  controljson  VARCHAR2(2000) not null,
+  confirm      VARCHAR2(300),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+alter table WX_REGISSET add primary key (ID);
 
 --周滔 2014-10-09 邀请函 表创建
 create table WX_INVITATION
@@ -392,10 +437,29 @@ create table WX_INVITATION
   modifieddate         DATE,
   isactive             CHAR(1) default 'Y' not null,
   wx_invitationtemp_id NUMBER(10)
-)
+);
 alter table WX_INVITATION add primary key (ID);
 alter table WX_INVITATION add constraint WX_INVITATION_WX_INVITATI_FK1 foreign key (WX_INVITATIONTEMP_ID) references WX_INVITATIONTEMP (ID) on delete set null;
 alter table WX_INVITATION add constraint WX_INVITATION_WX_REGISSET_FK1 foreign key (WX_REGISSET_ID) references WX_REGISSET (ID) on delete set null;
+
+--周滔 2014-10-09 微杂志过场图片 表创建
+create table WX_MAGAZINEIMAGE
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10),
+  photo          VARCHAR2(250) not null,
+  page           NUMBER(10) not null,
+  anchorstate    CHAR(1) default 'N',
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+);
+alter table WX_MAGAZINEIMAGE add primary key (ID);
+alter table WX_MAGAZINEIMAGE add constraint FK_WX_MAGAZINEIMAGE_113669 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
 
 --周滔 2014-10-09 微杂志 表创建
 create table WX_MAGAZINE
@@ -419,27 +483,8 @@ create table WX_MAGAZINE
   creationdate DATE,
   modifieddate DATE,
   isactive     CHAR(1) default 'Y' not null
-)
+);
 alter table WX_MAGAZINE add primary key (ID);
-
---周滔 2014-10-09 微杂志过场图片 表创建
-create table WX_MAGAZINEIMAGE
-(
-  id             NUMBER(10) not null,
-  ad_client_id   NUMBER(10),
-  ad_org_id      NUMBER(10),
-  wx_magazine_id NUMBER(10),
-  photo          VARCHAR2(250) not null,
-  page           NUMBER(10) not null,
-  anchorstate    CHAR(1) default 'N',
-  ownerid        NUMBER(10),
-  modifierid     NUMBER(10),
-  creationdate   DATE,
-  modifieddate   DATE,
-  isactive       CHAR(1) default 'Y' not null
-)
-alter table WX_MAGAZINEIMAGE add primary key (ID);
-alter table WX_MAGAZINEIMAGE add constraint FK_WX_MAGAZINEIMAGE_113669 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
 
 --周滔 2014-10-09 微杂志锚点 表创建
 create table WX_MAGAZINEANCHOR
@@ -457,7 +502,7 @@ create table WX_MAGAZINEANCHOR
   creationdate   DATE,
   modifieddate   DATE,
   isactive       CHAR(1) default 'Y' not null
-)
+);
 alter table WX_MAGAZINEANCHOR add primary key (ID);
 alter table WX_MAGAZINEANCHOR add constraint FK_WX_MAGAZINEANCHOR_113674 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
 

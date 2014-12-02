@@ -1,135 +1,150 @@
 ﻿--paco add begin  20140915
+SET echo off;
+SET heading off;
+SET feedback off;
+spool E:\Works\build_info\procedureAandfuncton\proc.sql;
+
+
 -- 2014/9/15 消息群发根据错误次数过滤与修改时间降序
-wx_notify_crowdreply
+select decode(t.line,1,'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_notify_crowdreply');
 
 --2014/9/23 清库存储过程，清除新添加的表
-AD_CLIENT_Drop
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('AD_CLIENT_Drop');
 
 --2014/9/23 获取扫描二维码返回内容
-wx_rqcodemessage_$r_scan
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_rqcodemessage_$r_scan');
 
 --2014/9/25	修改默认条码数量、销售价与标准价
-wx_appendgoods_am
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_appendgoods_am');
 
 --2014/9/25	修改默认条码数量、销售价与标准价
-wx_alias_$d_delete
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_alias_$d_delete');
 
 --2014/9/25修改默认条码数量、销售价与标准价
-wx_alias_$w_modifyorcreate
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_alias_$w_modifyorcreate');
 
 --2014/9/25获取物流费用时传入公司编号
-wx_logistics_free
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_logistics_free');
 
 --2014/9/28修改订单在支付成功时再修改优惠券使用状态
-wx_order_acm
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_acm');
 
 --2014/9/28修改订单在支付成功时再修改优惠券使用状态
-wx_order_cancel
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_cancel');
 
 --2014/9/28修改订单在支付成功时再修改优惠券使用状态
-wx_order_cancel
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_cancel');
 
 --2014/9/28修改订单在支付成功时再修改优惠券使用状态
-wx_order_destocking
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_destocking');
 
 --2014/9/28经上领卡时，如果没有接通线下，则线上根据数据判断是否发券
-wx_coupon_onlinecoupon
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_coupon_onlinecoupon');
 
 --2014/9/30如果删除了默认支付方式，则更新任意一条为默认支付方式
-wx_pay_bd
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_pay_bd');
 
 --2014/9/30新增或修改支付方式时，判断是有默认支付方式，没有就任务设置一条
-wx_pay_acm
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_pay_acm');
 
 --2014/9/30图文时新增公司条件
-wx_message_$r_reply
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_message_$r_reply');
 
 --2014/9/30图文时新增公司条件
-wx_message_$r_replyq
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_message_$r_replyq');
 
 --2014/9/30图文时新增公司条件
-wx_message_$r_scan
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_message_$r_scan');
 
 --2014/9/30图文时新增公司条件
-wx_message_$r_un
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_message_$r_un');
 
 --2014/9/30图文时新增公司条件
-wx_notify_$r_reply
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_notify_$r_reply');
 
 --2014/9/30图文时新增公司条件
-wx_rqcodemessage_$r_scan
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_rqcodemessage_$r_scan');
 
 --2014/9/30订单支付成功后发短信
-wx_order_sendpaysms
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_sendpaysms');
 
 --发货成功后返回列表页面
-wx_order_send
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_send');
 
 --2014/10/13自动任务群发时，如果调用数据库方法异常时修改相应记录的修改时间
-wx_notify_crowdreply
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_notify_crowdreply');
 
 --2014/10/14获取公司下短信发送数量
-getsendsmscount
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('getsendsmscount');
 
 --2014/10/24修改群发存储过程异常
-wx_notify_crowdreply
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_notify_crowdreply');
 
 --2014/11/7修改删除规格明细数据库函数
-WX_SPEC_$R_DELETEITEM
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_SPEC_$R_DELETEITEM');
 
 --多图片上传功能 默认规格名称为均码
-wx_appendgoods_ac;
-wx_appendgoods_am;
-wx_v_cost_appendgoods_ac;
-wx_v_cost_appendgoods_am;
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_appendgoods_ac');
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_appendgoods_am');
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_v_cost_appendgoods_ac');
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_v_cost_appendgoods_am');
 
 --获取连接函数
-get_pathurl;
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('get_pathurl');
 
 --商品视图中添加是否新品
-wx_v_appendgoods;
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_v_appendgoods');
 --paco add end 20140915
 
 --zhoutao add begin 20140915
 
 --2014/10/9微报名修改过程
-WX_REGISSET_AM
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_REGISSET_AM');
 
 --2014/10/9微报名删除过程
-WX_REGISSET_BD
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_REGISSET_BD');
 
 --2014/10/9报名内容键入获取
-wx_regiscontrol_getjson
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_regiscontrol_getjson');
 
 --2014/10/9公司信息 修改 触发过程
-WEB_CLIENT_AM
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WEB_CLIENT_AM');
 
 --2014/10/22修改群发bug（VIP值过多，字符串溢出）
-wx_notify_$r_aud
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_notify_$r_aud');
 
 --2014/10/29整理收货地址
-wx_address_acm
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_address_acm');
 
 --2014/10/29整理收货地址
-wx_address_bd
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_address_bd');
 
 --2014/11/27修复订单收货地址外键问题
-wx_order_acm
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_acm');
 
 --zhoutao add end 20140915
 
 --huangchunyang add begin 20140915
 
 --2014/10/16显示商城概况信息
-WX_ORDER_$r_GETORDER
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_ORDER_$r_GETORDER');
 
 --2014/10/16显示商城概况信息
-WX_ORDER_$r_GETORDERAMT
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_ORDER_$r_GETORDERAMT');
 
 --2014/10/28显示官网概况信息
-WX_ISSUEARTICLE_$r_GETSUM
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('WX_ISSUEARTICLE_$r_GETSUM');
 
+--2014 修改创建菜单存储过程
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_menu_create');
+
+--2014 积分支付如果没有支付接通线下，则添加积分流水
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_order_accept');
+
+--2014 商品所属分类可以在新增是操作
+select decode(t.line,1,chr(10)||'/'||chr(10)||'create or replace '||t.text,t.text) from user_source t where t.name=upper('wx_productcategory_$r_savejson');
 --huangchunyang add end 20140915
+spool off;
 
 
 
