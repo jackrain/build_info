@@ -1,0 +1,184 @@
+--add by paco begin
+--会员信息表中新增验证码字段
+alter table WX_VIP add VERIFYCODE varchar2(10);
+
+--商品表中新增图片集字段，通过AC/AM插入到商品图片集表中
+alter table WX_APPENDGOODS add productpics clob;
+
+--官网增加访问量字段
+alter table WX_SETINFO add visitnumber number(10) default 0;
+
+--WX_VIP表增加省市区字段
+alter table WX_VIP add province VARCHAR2(50);
+alter table WX_VIP add city VARCHAR2(50);
+alter table WX_VIP add area VARCHAR2(50);
+
+--WX_ORDER添加支付金额字段，并修改已支付订单的支付金额
+alter table WX_ORDER add paymoney number(16,2);
+update wx_order o set o.paymoney=o.tot_amt where o.status in(3,4,5,7,8);
+
+--修改表的扩展属性字段的长度（255-》1000）
+alter table AD_TABLE modify props VARCHAR2(1000);
+
+--短信充值增加是否开票字段
+alter table WX_RECHARGERECORD add ismakeout char(1) default 'N' not null;
+
+
+alter table WX_TOWXMESSAGE add primary key (ID);
+
+
+alter table WX_TOWXMESSAGEITEM add primary key (ID);
+alter table WX_TOWXMESSAGEITEM 
+add constraint FK_WX_TOWXMESSAGEITEM_114525 foreign key (WX_TOWXMESSAGE_ID)
+references WX_TOWXMESSAGE (ID) on delete set null;
+
+
+
+
+alter table WX_NOTIFYRECODE
+  add primary key (ID);
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114477 foreign key (WX_TOWXMESSAGE_ID)
+  references WX_TOWXMESSAGE (ID) on delete set null;
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114482 foreign key (WX_MESSGAE_ID)
+  references WX_MESSGAE (ID) on delete set null;
+
+--修改短信充值记录表
+alter table WX_RECHARGERECORD modify money not null;			--充值金额
+alter table WX_RECHARGERECORD add smsnumber NUMBER(10);			--充值短信数量
+alter table WX_RECHARGERECORD add state VARCHAR2(20) default 'WAIT_BUYER_PAY';	--记录状态
+alter table WX_RECHARGERECORD add docno VARCHAR2(100);			--记录单号
+alter table WX_RECHARGERECORD add platformid VARCHAR2(100);		--平台号
+alter table WX_RECHARGERECORD add platformno VARCHAR2(100);		--平台单号
+alter table WX_RECHARGERECORD modify creationdate default sysdate;	--创建时间
+alter table WX_RECHARGERECORD modify modifieddate default sysdate;	--修改时间
+alter table WX_RECHARGERECORD add ismakeout CHAR(1) default 'Y' not null;	--是否开票
+
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table WX_CANCELCOUPON
+  add primary key (ID);
+alter table WX_CANCELCOUPON
+  add constraint FK_WX_CANCELCOUPON_113822 foreign key (WX_STORE_ID)
+  references WX_STORE (ID) on delete set null;
+-- Create/Recreate indexes 
+create unique index AK_WX_CANCELCOUPON on WX_CANCELCOUPON (DOCNO, AD_CLIENT_ID);
+create index IX_WX_CANCELCOUPON_01 on WX_CANCELCOUPON (STATUS);
+
+
+
+--这个是是否使用短信验证的加字段的语句
+alter table WEB_CLIENT add ismesauth char(1) default 'N' not null;
+
+/*
+the scratchticket tables,
+		design by   : DB_YPF
+		design date : 2014-11-12
+		copyright   : burgeon/the mobile large-data department
+*/
+--drop the constraints
+ALTER TABLE WX_SCRATCHREWARD
+DROP CONSTRAINT FK_WX_SCRATCHREWARD_TICKET;
+
+ALTER TABLE WX_SCRATCHREWARD
+DROP CONSTRAINT FK_WX_SCRATCHREWARD_COUPON;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_CHTICKETNOTE_TICKET;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_TICKETNOTE_VIP;
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE
+DROP CONSTRAINT FK_WX_TICKETNOTE_REWARD;
+
+
+
+--create constraints
+ALTER TABLE WX_SCRATCHREWARD 
+ADD CONSTRAINT FK_WX_SCRATCHREWARD_TICKET FOREIGN KEY (WX_SCRATCHTICKET_ID)
+REFERENCES WX_SCRATCHTICKET(ID);
+
+ALTER TABLE WX_SCRATCHREWARD 
+ADD CONSTRAINT FK_WX_SCRATCHREWARD_COUPON FOREIGN KEY (WX_COUPON_ID)
+REFERENCES WX_COUPON(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_CHTICKETNOTE_TICKET FOREIGN KEY (WX_SCRATCHTICKET_ID)
+REFERENCES WX_SCRATCHTICKET(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_TICKETNOTE_VIP FOREIGN KEY (WX_VIP_ID)
+REFERENCES WX_VIP(ID);
+
+ALTER TABLE WX_SCRATCHTICKET_NOTE 
+ADD CONSTRAINT FK_WX_TICKETNOTE_REWARD FOREIGN KEY (WX_SCRATCHREWARD_ID)
+REFERENCES WX_SCRATCHREWARD(ID);
+
+-- Add/modify columns  折叠菜单
+alter table AD_ACCORDION add accordion_cls VARCHAR2(200);
+
+--添加默认支付方式
+alter table WX_PAY add ISDEFAULT char(1) default 'Y';
+
+--商品分类添加是否显示
+alter table WX_ITEMCATEGORYSET add isshow CHAR(1) default 'Y';
+
+-- Add/modify columns 
+alter table WX_MALL add discount CLOB;
+alter table WX_MALL add showmenu CHAR(1) default 'N';
+
+--短信平台添加主键
+alter table WX_SMSINFO add primary key (ID);
+--add by paco end
+
+
+--add by zhoutao  begin
+-- Add/modify columns 
+alter table WX_APPENDGOODS add buynum NUMBER(10) default 0;
+alter table WX_APPENDGOODS add isnew CHAR(1) default 'N';
+alter table WX_APPENDGOODS add onboarddate DATE;
+alter table WX_APPENDGOODS add offboarddate DATE;
+
+
+alter table WX_REGISCONTROL add primary key (ID);
+
+--周滔 2014-11-27 智能绑定修改
+alter table WX_INTERFACESET add ENCODINGAESKEY VARCHAR2(43) NULL;
+
+--周滔 2014-11-27 修复订单收货地址引用问题
+alter table WX_ORDER add PROVINCE VARCHAR2(50) NULL;
+alter table WX_ORDER add CITY VARCHAR2(50) NULL;
+alter table WX_ORDER add REGIONID VARCHAR2(50) NULL;
+alter table WX_ORDER add ADDRESS VARCHAR2(250) NULL;
+alter table WX_ORDER add NAME VARCHAR2(100) NULL;
+alter table WX_ORDER add PHONENUM VARCHAR2(100) NULL;
+
+alter table WX_REGISRECORD add primary key (ID)
+
+alter table WX_REGISSET add primary key (ID);
+
+
+alter table WX_INVITATION add primary key (ID);
+alter table WX_INVITATION add constraint WX_INVITATION_WX_INVITATI_FK1 foreign key (WX_INVITATIONTEMP_ID) references WX_INVITATIONTEMP (ID) on delete set null;
+alter table WX_INVITATION add constraint WX_INVITATION_WX_REGISSET_FK1 foreign key (WX_REGISSET_ID) references WX_REGISSET (ID) on delete set null;
+
+
+alter table WX_MAGAZINEIMAGE add primary key (ID);
+alter table WX_MAGAZINEIMAGE add constraint FK_WX_MAGAZINEIMAGE_113669 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+
+alter table WX_MAGAZINE add primary key (ID);
+
+
+alter table WX_MAGAZINEANCHOR add primary key (ID);
+alter table WX_MAGAZINEANCHOR add constraint FK_WX_MAGAZINEANCHOR_113674 foreign key (WX_MAGAZINE_ID) references WX_MAGAZINE (ID) on delete cascade;
+
+--周滔 2014-10-22 修改群发bug（VIP值过多，字符串溢出）
+--新增一张表WX_NOTIFYTEMP（群发VIP临时表）只有一个字段 next99已经更新
+
+--周滔 2014-10-27 整理菜单和微应用
+delete from wx_app t where t.id in(3,5,6,7,8,10,11,12,13,14,15,16,17,18,19,39,42);
+update wx_app t set t.url = 'http://www.shujinwang.com/' where t.id = 35;
+--add by zhoutao end

@@ -1,0 +1,331 @@
+--多图文头表
+create table WX_TOWXMESSAGE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  messagetype  VARCHAR2(255),
+  messagecount NUMBER(10),
+  title        VARCHAR2(255),
+  content      CLOB,
+  description  VARCHAR2(1000),
+  url          VARCHAR2(255),
+  hurl         VARCHAR2(255),
+  thumbnail    VARCHAR2(255),
+  fromid       NUMBER(10),
+  objid        VARCHAR2(500),
+  contentjson  CLOB,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--多图文明细表
+create table WX_TOWXMESSAGEITEM
+(
+  id                NUMBER(10) not null,
+  ad_client_id      NUMBER(10),
+  ad_org_id         NUMBER(10),
+  wx_towxmessage_id NUMBER(10),
+  author            VARCHAR2(255),
+  picurl            VARCHAR2(255),
+  tourl             VARCHAR2(255),
+  thumbnail         VARCHAR2(255),
+  content           VARCHAR2(255),
+  description       VARCHAR2(255),
+  isshowcover       VARCHAR2(255),
+  fromid            NUMBER(10),
+  objid             VARCHAR2(500),
+  sort              VARCHAR2(255),
+  ownerid           NUMBER(10),
+  modifierid        NUMBER(10),
+  creationdate      DATE,
+  modifieddate      DATE,
+  isactive          CHAR(1) default 'Y' not null
+);
+
+--新增群发/单发表
+CREATE TABLE WX_NOTIFYRECODE(
+    ID NUMBER(10)  NOT NULL ,
+    AD_CLIENT_ID NUMBER(10) ,
+    AD_ORG_ID NUMBER(10) ,
+    WX_MESSGAE_ID NUMBER(10) ,
+    WX_TOWXMESSAGE_ID NUMBER(10) ,
+    MASSOPENID CLOB  NOT NULL ,
+    SENDDATE DATE ,
+    TYPE CHAR(1)  NOT NULL ,
+    STATE CHAR(1)  DEFAULT 'N',
+    CONTENT CLOB ,
+    ERRCOUNT NUMBER(10) ,
+    ERRORLOG VARCHAR(1000) ,
+    OWNERID NUMBER(10) ,
+    MODIFIERID NUMBER(10) ,
+    CREATIONDATE DATE ,
+    MODIFIEDDATE DATE ,
+    ISACTIVE CHAR(1)  DEFAULT 'Y' NOT NULL ,
+    PRIMARY KEY (ID)
+);
+--短信平台
+create table WX_SMSINFO
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  smsmoney     NUMBER(16,2),
+  canusenumber NUMBER(10),
+  usednumber   NUMBER(10),
+  smsprice     NUMBER(16,2),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--券核销
+create table WX_CANCELCOUPON
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  docno        VARCHAR2(100) not null,
+  wx_store_id  NUMBER(10),
+  status       NUMBER(10) default 1,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--create tables;
+DROP TABLE WX_SCRATCHTICKET PURGE;
+CREATE TABLE WX_SCRATCHTICKET(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    NAME			VARCHAR2(100)		NOT NULL ,
+    STARTTIME			DATE			NOT NULL ,
+    ENDTIME			DATE			NOT NULL ,
+    AREAPHOTO			VARCHAR2(500)		NOT NULL ,
+    BACKPHOTO			VARCHAR2(500)		NOT NULL ,
+    DRAWTYPE			CHAR(3)			NOT NULL ,
+    WHODRAW			CHAR(3)			NOT NULL ,
+    MAXTIMES			NUMBER(10)		NOT NULL ,
+    REPEATREPLY			VARCHAR2(100)		NOT NULL ,
+    NOREWARDPROMPT		VARCHAR2(150)		NOT NULL ,
+    STARTDECLARE		CLOB			NOT NULL ,
+    EXPIRYDECLARE		CLOB			NOT NULL ,
+    ENDDECLARE			VARCHAR2(500)		NOT NULL ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHTICKET_ID_PK PRIMARY KEY (ID)
+);
+
+DROP TABLE WX_SCRATCHREWARD PURGE;
+CREATE TABLE WX_SCRATCHREWARD(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    WX_SCRATCHTICKET_ID		NUMBER(10)		NOT NULL ,
+    REWARDDEGREE		VARCHAR2(50)		NOT NULL ,
+    REWARDTYPE			CHAR(3)			NOT NULL ,
+    GIVEOUTTYPE			CHAR(3)			NOT NULL ,
+    WX_COUPON_ID		NUMBER(10)			 ,
+    INTEGRAL			NUMBER(10)			 ,
+    REWARDNAME			VARCHAR2(500)		NOT NULL ,
+    REWARDCOUNT			NUMBER(10)		NOT NULL ,
+    REWARDRATE			NUMBER(10,8)		NOT NULL ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHREWARD_ID_PK PRIMARY KEY (ID)
+);
+
+DROP TABLE WX_SCRATCHTICKET_NOTE PURGE;
+CREATE TABLE WX_SCRATCHTICKET_NOTE(
+    ID				NUMBER(10)		NOT NULL ,
+    AD_CLIENT_ID		NUMBER(10)			 ,
+    AD_ORG_ID			NUMBER(10)			 ,
+    --start(other nonobligatory)
+    WX_SCRATCHTICKET_ID		NUMBER(10)		NOT NULL ,
+    WX_VIP_ID			NUMBER(10)			 ,
+    COUPONNO			VARCHAR2(100)			 ,
+    COUPONISUSED		CHAR(1)				 ,
+    RECEIVE_STATE		CHAR(1)			NOT NULL ,
+    RECEIVETIME			DATE				 ,
+    WX_SCRATCHREWARD_ID		NUMBER(10)			 ,
+    --end(other nonobligatory)
+    OWNERID			NUMBER(10)			 ,
+    MODIFIERID			NUMBER(10)			 ,
+    CREATIONDATE		DATE				 ,
+    MODIFIEDDATE		DATE				 ,
+    ISACTIVE			CHAR(1)	DEFAULT 'Y'	NOT NULL ,
+    --constraints
+    CONSTRAINT WX_SCRATCHTICKET_NOTE_ID_PK PRIMARY KEY (ID)
+);
+--周滔 2014-10-09 报名内容键入 表创建
+create table WX_REGISCONTROL
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  key          VARCHAR2(100) not null,
+  type         VARCHAR2(100) not null,
+  optional     VARCHAR2(100),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null,
+  required     CHAR(1) not null,
+  ifmodify     CHAR(1) not null,
+  checktype    VARCHAR2(100)
+);
+--周滔 2014-10-09 邀请函模板 表创建
+create table WX_INVITATIONTEMP
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  foldername   VARCHAR2(100) not null,
+  photo        VARCHAR2(250) not null,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--周滔 2014-10-09 报名清单
+create table WX_REGISRECORD
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  md1            VARCHAR2(100) not null,
+  md2            VARCHAR2(50) not null,
+  md3            VARCHAR2(250),
+  md4            VARCHAR2(10),
+  md5            DATE,
+  md6            VARCHAR2(10),
+  md7            VARCHAR2(50),
+  md8            VARCHAR2(300),
+  md9            VARCHAR2(100),
+  md10           VARCHAR2(250),
+  md11           VARCHAR2(100),
+  md12           VARCHAR2(100),
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null,
+  formid         VARCHAR2(100),
+  objectid       NUMBER(10),
+  wx_regisset_id NUMBER(10),
+  wx_vip_id      NUMBER(10)
+);
+--周滔 2014-10-09 微杂志过场图片 表创建
+create table WX_MAGAZINEIMAGE
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10),
+  photo          VARCHAR2(250) not null,
+  page           NUMBER(10) not null,
+  anchorstate    CHAR(1) default 'N',
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+);
+--周滔 2014-10-09 微杂志 表创建
+create table WX_MAGAZINE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  name         VARCHAR2(100) not null,
+  describe     VARCHAR2(100) not null,
+  color        VARCHAR2(100) not null,
+  bgphoto      VARCHAR2(250) not null,
+  homestate    CHAR(1) default 'N',
+  musicstate   CHAR(1) default 'N',
+  bgmusic      VARCHAR2(250),
+  loop         CHAR(1) default 'N',
+  homephoto    VARCHAR2(250) not null,
+  cleanstate   CHAR(1) default 'N',
+  cleanphoto   VARCHAR2(250),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--周滔 2014-10-09 微杂志锚点 表创建
+create table WX_MAGAZINEANCHOR
+(
+  id             NUMBER(10) not null,
+  ad_client_id   NUMBER(10),
+  ad_org_id      NUMBER(10),
+  wx_magazine_id NUMBER(10) not null,
+  anchor         VARCHAR2(500) not null,
+  page           NUMBER(10) not null,
+  fromid         VARCHAR2(100),
+  objectid       VARCHAR2(100),
+  ownerid        NUMBER(10),
+  modifierid     NUMBER(10),
+  creationdate   DATE,
+  modifieddate   DATE,
+  isactive       CHAR(1) default 'Y' not null
+);
+--周滔 2014-10-09 报名设置 表创建
+create table WX_REGISSET
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  attention    CHAR(1) default 'Y' not null,
+  template     VARCHAR2(100) not null,
+  controljson  VARCHAR2(2000) not null,
+  confirm      VARCHAR2(300),
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+--周滔 2014-10-09 邀请函 表创建
+create table WX_INVITATION
+(
+  id                   NUMBER(10) not null,
+  ad_client_id         NUMBER(10),
+  ad_org_id            NUMBER(10),
+  photo                VARCHAR2(250),
+  wx_regisset_id       NUMBER(10),
+  theme                VARCHAR2(100) not null,
+  starttime            DATE not null,
+  location             VARCHAR2(250) not null,
+  endtime              DATE not null,
+  organizers           VARCHAR2(100) not null,
+  introduction         VARCHAR2(500) not null,
+  ownerid              NUMBER(10),
+  modifierid           NUMBER(10),
+  creationdate         DATE,
+  modifieddate         DATE,
+  isactive             CHAR(1) default 'Y' not null,
+  wx_invitationtemp_id NUMBER(10)
+);

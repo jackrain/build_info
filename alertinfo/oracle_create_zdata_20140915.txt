@@ -1,0 +1,45 @@
+--报名设置数据
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (1, 37, 27, '姓名', 'MD1', 'text', null, 893, 893, to_date('17-09-2014 13:31:12', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:57', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (2, 37, 27, '手机号码', 'MD2', 'text', null, 893, 893, to_date('17-09-2014 13:31:49', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:50', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'Y', 'Y', 'phone');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (3, 37, 27, '照片', 'MD3', 'image', null, 893, 893, to_date('17-09-2014 13:35:28', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (4, 37, 27, '性别', 'MD4', 'select', '男/女', 893, 893, to_date('17-09-2014 13:37:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:37:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (5, 37, 27, '出生年月', 'MD5', 'datetime', null, 893, 893, to_date('17-09-2014 13:38:47', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:36:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'datetime');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (6, 37, 27, '年龄', 'MD6', 'text', null, 893, 893, to_date('17-09-2014 13:41:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:40', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'number');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (7, 37, 27, '城市', 'MD7', 'address', null, 893, 893, to_date('17-09-2014 13:41:58', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'address');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (8, 37, 27, '企业名称', 'MD10', 'text', null, 893, 893, to_date('17-09-2014 13:44:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:48', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (9, 37, 27, '地址', 'MD8', 'text', null, 893, 893, to_date('17-09-2014 13:42:25', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:34:07', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (10, 37, 27, '行业', 'MD9', 'text', null, 893, 893, to_date('17-09-2014 13:43:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:25', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (11, 37, 27, '职位', 'MD11', 'text', null, 893, 893, to_date('17-09-2014 13:46:07', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:16', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'text');
+
+insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
+values (12, 37, 27, '邮箱', 'MD12', 'text', null, 893, 893, to_date('17-09-2014 13:46:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:01', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'email');
+
+
+alter table WX_INVITATIONTEMP add primary key (ID);
+--邀请函模板数据
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (1, 37, 27, '清新简约版', '102', '/html/nds/oto/webapp/invitation/tempImage/102.jpg', 893, 893, to_date('17-09-2014 13:35:45', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:06', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
+values (2, 37, 27, '时尚商务版', '101', '/html/nds/oto/webapp/invitation/tempImage/101.jpg', 893, 893, to_date('17-09-2014 13:38:48', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
