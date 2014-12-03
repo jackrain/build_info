@@ -35,11 +35,12 @@ values (11, 37, 27, '职位', 'MD11', 'text', null, 893, 893, to_date('17-09-2014 
 insert into WX_REGISCONTROL (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, KEY, TYPE, OPTIONAL, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE, REQUIRED, IFMODIFY, CHECKTYPE)
 values (12, 37, 27, '邮箱', 'MD12', 'text', null, 893, 893, to_date('17-09-2014 13:46:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-09-2014 09:33:01', 'dd-mm-yyyy hh24:mi:ss'), 'Y', 'N', 'N', 'email');
 
-
-alter table WX_INVITATIONTEMP add primary key (ID);
 --邀请函模板数据
 insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
 values (1, 37, 27, '清新简约版', '102', '/html/nds/oto/webapp/invitation/tempImage/102.jpg', 893, 893, to_date('17-09-2014 13:35:45', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:06', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
 
 insert into WX_INVITATIONTEMP (ID, AD_CLIENT_ID, AD_ORG_ID, NAME, FOLDERNAME, PHOTO, OWNERID, MODIFIERID, CREATIONDATE, MODIFIEDDATE, ISACTIVE)
 values (2, 37, 27, '时尚商务版', '101', '/html/nds/oto/webapp/invitation/tempImage/101.jpg', 893, 893, to_date('17-09-2014 13:38:48', 'dd-mm-yyyy hh24:mi:ss'), to_date('24-09-2014 17:56:20', 'dd-mm-yyyy hh24:mi:ss'), 'Y');
+
+--修改公司昵称
+update web_client wc set wc.nickname=decode(wc.loginuser,null,wc.ad_client_id,wc.loginuser) where wc.nickname is null;

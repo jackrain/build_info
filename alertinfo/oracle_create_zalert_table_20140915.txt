@@ -159,7 +159,7 @@ alter table WX_REGISRECORD add primary key (ID)
 
 alter table WX_REGISSET add primary key (ID);
 
-
+alter table WX_INVITATIONTEMP add primary key (ID);
 alter table WX_INVITATION add primary key (ID);
 alter table WX_INVITATION add constraint WX_INVITATION_WX_INVITATI_FK1 foreign key (WX_INVITATIONTEMP_ID) references WX_INVITATIONTEMP (ID) on delete set null;
 alter table WX_INVITATION add constraint WX_INVITATION_WX_REGISSET_FK1 foreign key (WX_REGISSET_ID) references WX_REGISSET (ID) on delete set null;
