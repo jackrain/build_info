@@ -531,10 +531,10 @@ BEGIN
             AND a.wx_media_id = b.id
             AND a.ad_client_id = b.ad_client_id
             AND a.ad_client_id = v_client_id;
+                                            "XMLCData"),
             SELECT xmlelement("xml",
                                xmlelement("ToUserName",
                                            xmlcdata(nvl(v_fromusername, ' '))
-                                            "XMLCData"),
                                xmlelement("FromUserName",
                                            xmlcdata(v_tousername) "XMLCData"),
                                xmlelement("CreateTime",
@@ -615,10 +615,10 @@ BEGIN
                                                                                  END
                                                                                 ELSE
                                                                                 v_sr1||case when v_publictype='4'
+                                                                                         ||v_sr2
                                                                                                           then replace(apex_util.url_encode(replace(v_domain||nvl(vj.purl,''), '@ID@', nvl(s.objid, ' '))),'%2E','.')
                                                                                                           else replace(nvl(v_domain||vj.purl,''), '@ID@', nvl(s.objid, ' '))
                                                                                                      end
-                                                                                         ||v_sr2
                                                                             END) AS
                                                                    "Url"))) ORDER BY
                                            s.sort asc))
@@ -682,13 +682,11 @@ create or replace PROCEDURE wx_appendgoods_am(p_id IN NUMBER) AS
 		f_default_qty  number(10);
 		f_all_qty    number(10);
 		f_all_count  number(10);
+		f_sqls       varchar2(1000);
 BEGIN
     --删除原有所属分类
-    DELETE FROM wx_productcategory t
-    WHERE t.wx_appendgoods_id = p_id;
-    /*--删除原有商品条码
-    DELETE FROM wx_alias t
-    WHERE t.wx_appendgoods_id = p_id;*/
+    --DELETE FROM wx_productcategory t
+    --WHERE t.wx_appendgoods_id = p_id;
     SELECT t.productcategory,t.spec,t.ad_client_id
     INTO str1,v_spec,v_ad_client_id
     FROM wx_appendgoods t
@@ -710,7 +708,19 @@ BEGIN
 				end if;
 		end if;
     --raise_application_error(-20014, str1);
-    jl := json_list(str1);
+    begin
+		    jo:=json(str1);
+				if jo.exist('ids') then
+				   str1:=jo.get('ids').get_string;
+				end if;
+		    --设置商品所属分类
+		    f_sqls:='update wx_productcategory pc set pc.wx_appendgoods_id='||p_id||'  where pc.id in ('||str1||')';
+				execute immediate f_sqls;
+				commit;
+		exception when others then
+		     null;
+		end;
+    /*jl := json_list(str1);
     FOR i IN 1 .. jl.count LOOP
         jo := json(jl.get_elem(i));
         v_id := jo.get('id').get_number;
@@ -722,7 +732,7 @@ BEGIN
                    w.ad_org_id, p_id, SYSDATE, SYSDATE, 'Y', v_id,w.modifierid
             FROM wx_appendgoods w
             WHERE w.id = p_id;
-    END LOOP;
+    END LOOP;*/
 		--修改默认库存的金额与数量
 		update wx_alias a set (a.qty,a.pricelist,a.priceactual)
 		                =(select ag.remainnum,ag.itemunitprice,ag.priceactual from wx_appendgoods ag where ag.id=p_id)
@@ -1927,10 +1937,10 @@ BEGIN
                                                            xmlcdata(v_wx_messageauto.title)
                                                             "XMLCData"),
                                                xmlelement("Description",
+                                                           xmlcdata(v_wx_messageauto.url)
                                                            xmlcdata(v_wx_messageauto.content)
                                                             "XMLCData"),
                                                xmlelement("MusicUrl",
-                                                           xmlcdata(v_wx_messageauto.url)
                                                             "XMLCData"),
                                                xmlelement("HQMusicUrl",
                                                            xmlcdata(v_wx_messageauto.hurl)
@@ -2357,10 +2367,10 @@ BEGIN
             v_mstype := 'news';
             SELECT xmlelement("xml",
                                xmlelement("ToUserName",
+                                           xmlcdata(nvl(v_tousername, ' '))
                                            xmlcdata(nvl(v_fromusername, ' '))
                                             "XMLCData"),
                                xmlelement("FromUserName",
-                                           xmlcdata(nvl(v_tousername, ' '))
                                             "XMLCData"),
                                xmlelement("CreateTime",
                                            to_char(SYSDATE, 'yyyymmddhhmiss')),
@@ -4079,6 +4089,7 @@ create or replace PROCEDURE wx_appendgoods_ac(p_id IN NUMBER) AS
     v_issale        CHAR(3);
 		v_count         number(10);
 		v_ad_client_id  number(10);
+		f_sqls       varchar2(1000);
 BEGIN
     SELECT t.productcategory,t.spec,t.ad_client_id
 		INTO str1,v_spec,v_ad_client_id
@@ -4100,8 +4111,20 @@ BEGIN
     --raise_application_error(-20014, str1);
 		--更新商品类型为非积分商品
 		update wx_appendgoods ag set ag.iscost='N' where ag.id=p_id;
+		begin
+		    jo:=json(str1);
+				if jo.exist('ids') then
+				   str1:=jo.get('ids').get_string;
+				end if;
+		    --设置商品所属分类
+		    f_sqls:='update wx_productcategory pc set pc.wx_appendgoods_id='||p_id||'  where pc.id in ('||str1||')';
+				execute immediate f_sqls;
+				commit;
+		exception when others then
+		     null;
+		end;
     --所属分类
-    jl := json_list(str1);
+    /*jl := json_list(str1);
     FOR i IN 1 .. jl.count LOOP
         jo   := json(jl.get_elem(i));
         v_id := jo.get('id').get_number;
@@ -4113,7 +4136,7 @@ BEGIN
                    w.ad_org_id, p_id, SYSDATE, SYSDATE, 'Y', v_id,w.ownerid,w.modifierid
             FROM wx_appendgoods w
             WHERE w.id = p_id;
-    END LOOP;
+    END LOOP;*/
 		--添加一条默认条码数据
 		wx_aliasid := get_sequences('wx_alias');
 		INSERT INTO wx_alias
@@ -4200,13 +4223,11 @@ create or replace PROCEDURE wx_appendgoods_am(p_id IN NUMBER) AS
 		f_default_qty  number(10);
 		f_all_qty    number(10);
 		f_all_count  number(10);
+		f_sqls       varchar2(1000);
 BEGIN
     --删除原有所属分类
-    DELETE FROM wx_productcategory t
-    WHERE t.wx_appendgoods_id = p_id;
-    /*--删除原有商品条码
-    DELETE FROM wx_alias t
-    WHERE t.wx_appendgoods_id = p_id;*/
+    --DELETE FROM wx_productcategory t
+    --WHERE t.wx_appendgoods_id = p_id;
     SELECT t.productcategory,t.spec,t.ad_client_id
     INTO str1,v_spec,v_ad_client_id
     FROM wx_appendgoods t
@@ -4228,7 +4249,19 @@ BEGIN
 				end if;
 		end if;
     --raise_application_error(-20014, str1);
-    jl := json_list(str1);
+    begin
+		    jo:=json(str1);
+				if jo.exist('ids') then
+				   str1:=jo.get('ids').get_string;
+				end if;
+		    --设置商品所属分类
+		    f_sqls:='update wx_productcategory pc set pc.wx_appendgoods_id='||p_id||'  where pc.id in ('||str1||')';
+				execute immediate f_sqls;
+				commit;
+		exception when others then
+		     null;
+		end;
+    /*jl := json_list(str1);
     FOR i IN 1 .. jl.count LOOP
         jo := json(jl.get_elem(i));
         v_id := jo.get('id').get_number;
@@ -4240,7 +4273,7 @@ BEGIN
                    w.ad_org_id, p_id, SYSDATE, SYSDATE, 'Y', v_id,w.modifierid
             FROM wx_appendgoods w
             WHERE w.id = p_id;
-    END LOOP;
+    END LOOP;*/
 		--修改默认库存的金额与数量
 		update wx_alias a set (a.qty,a.pricelist,a.priceactual)
 		                =(select ag.remainnum,ag.itemunitprice,ag.priceactual from wx_appendgoods ag where ag.id=p_id)
@@ -4372,6 +4405,7 @@ create or replace PROCEDURE wx_v_cost_appendgoods_ac(p_id IN NUMBER) AS
     v_ad_client_id  number(10);
     v_image         varchar2(500);
     v_images        varchar2(500);
+		f_sqls       varchar2(1000);
 BEGIN
     SELECT t.productcategory,t.spec,t.ad_client_id
     INTO str1,v_spec,v_ad_client_id
@@ -4393,7 +4427,19 @@ BEGIN
     --raise_application_error(-20014, str1);
 		--更新商品类型为积分商品
 		update wx_appendgoods ag set ag.iscost='Y',ag.itemunitprice=ag.priceactual where ag.id=p_id;
-    --所属分类
+		begin
+		    jo:=json(str1);
+				if jo.exist('ids') then
+				   str1:=jo.get('ids').get_string;
+				end if;
+		    --设置商品所属分类
+		    f_sqls:='update wx_productcategory pc set pc.wx_appendgoods_id='||p_id||'  where pc.id in ('||str1||')';
+				execute immediate f_sqls;
+				commit;
+		exception when others then
+		     null;
+		end;
+    /*--所属分类
     jl := json_list(str1);
     FOR i IN 1 .. jl.count LOOP
         jo   := json(jl.get_elem(i));
@@ -4406,7 +4452,7 @@ BEGIN
                    w.ad_org_id, p_id, SYSDATE, SYSDATE, 'Y', v_id,w.ownerid,w.modifierid
             FROM wx_appendgoods w
             WHERE w.id = p_id;
-    END LOOP;
+    END LOOP;*/
     --添加一条默认条码数据
     wx_aliasid := get_sequences('wx_alias');
     INSERT INTO wx_alias
@@ -4514,13 +4560,11 @@ create or replace PROCEDURE wx_v_cost_appendgoods_am(p_id IN NUMBER) AS
     f_all_count  number(10);
     v_image         varchar2(500);
     v_images        varchar2(500);
+		f_sqls       varchar2(1000);
 BEGIN
     --删除原有所属分类
-    DELETE FROM wx_productcategory t
-    WHERE t.wx_appendgoods_id = p_id;
-    /*--删除原有商品条码
-    DELETE FROM wx_alias t
-    WHERE t.wx_appendgoods_id = p_id;*/
+    --DELETE FROM wx_productcategory t
+    --WHERE t.wx_appendgoods_id = p_id;
     SELECT t.productcategory,t.spec,t.ad_client_id
     INTO str1,v_spec,v_ad_client_id
     FROM wx_appendgoods t
@@ -4541,8 +4585,20 @@ BEGIN
            raise_application_error(-20201,'商品编号已存在，请重新输入！');
         end if;
     end if;
+		begin
+		    jo:=json(str1);
+				if jo.exist('ids') then
+				   str1:=jo.get('ids').get_string;
+				end if;
+		    --设置商品所属分类
+		    f_sqls:='update wx_productcategory pc set pc.wx_appendgoods_id='||p_id||'  where pc.id in ('||str1||')';
+				execute immediate f_sqls;
+				commit;
+		exception when others then
+		     null;
+		end;
     --raise_application_error(-20014, str1);
-    jl := json_list(str1);
+    /*jl := json_list(str1);
     FOR i IN 1 .. jl.count LOOP
         jo := json(jl.get_elem(i));
         v_id := jo.get('id').get_number;
@@ -4554,7 +4610,7 @@ BEGIN
                    w.ad_org_id, p_id, SYSDATE, SYSDATE, 'Y', v_id,w.modifierid
             FROM wx_appendgoods w
             WHERE w.id = p_id;
-    END LOOP;
+    END LOOP;*/
         --查询默认条码库存数量
     select nvl(sum(nvl(a.qty,0)),0)
     into f_default_qty
@@ -5409,4 +5465,387 @@ BEGIN
     jor.put('book_clob', book_clob);
     return jor.to_char(false);
 END;
+
 /
+create or replace function wx_menu_create(ad_clientid in number)
+
+    return varchar2 as
+    /*
+    jack
+    wx_meunset
+    */
+    -- json
+    v_publictype varchar2(20);
+    v_domain     varchar2(100);
+    v_sr1        varchar2(4000);
+    v_sr2        varchar2(4000);
+    v_appid      varchar2(100);
+    v_url        varchar2(4000);
+    v_fid        number(10);
+    v_url1       varchar2(4000);
+    v_replace    varchar2(4000);
+    v_menuclob   clob;
+    jo           json;
+    jos1         json;
+    jolist       json_list;
+    jolist_tmp   json_list;
+begin
+    SELECT s.publictype,s.appid
+    INTO v_publictype, v_appid
+    FROM wx_interfaceset s
+    WHERE s.ad_client_id = ad_clientid;
+    SELECT 'http://'||wc.domain
+    INTO v_domain
+    FROM web_client wc
+    WHERE wc.ad_client_id = ad_clientid;
+    IF v_publictype = '4' THEN
+        v_sr1 := 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' ||
+                 v_appid || '&redirect_uri=';
+        v_sr2 := '&response_type=code&scope=snsapi_base&state=1#wechat_redirect';
+    ELSE
+        v_sr1 := '';
+        v_sr2 := '';
+    END IF;
+    select t.menucontent
+    into v_menuclob
+    from wx_menuset t
+    where t.ad_client_id = ad_clientid;
+    jo := json(v_menuclob);
+    if (jo.exist('button')) then
+        if (jo.get('button').is_array) then
+            jolist := json_list(jo.get('button'));
+            FOR v IN 1 .. jolist.count LOOP
+                jos1 := json(jolist.get_elem(v));
+                if (jos1.exist('sub_button') = false) then
+                    if (jos1.get('type').get_string = 'view') then
+                        v_fid     := jos1.get('fromid').get_number;
+                        v_replace := jos1.get('objid').get_string;
+                        SELECT t.purl
+                        INTO v_url
+                        FROM wx_v_jumpurlpath t
+                        WHERE t.id = v_fid+ad_clientid and t.AD_CLIENT_ID=ad_clientid;
+                        IF v_url IS NULL THEN
+                            v_url1 := v_replace;
+                        ELSE
+												    --v_url1 :=replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '));
+                            v_url1 :=v_sr1||case when v_publictype='4'
+                                                then replace(apex_util.url_encode(replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))),'%2E','.')
+                                                else replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))
+                                           end
+                                ||v_sr2;
+                        END IF;
+                        json_ext.remove(jo, 'button[' || v || '].key');
+                        json_ext.put(jo, 'button[' || v || '].url', v_url1);
+                    end if;
+                    json_ext.remove(jo, 'button[' || v || '].fromid');
+                    json_ext.remove(jo, 'button[' || v || '].objid');
+                    json_ext.remove(jo, 'button[' || v || '].menuType');
+                elsif (jos1.exist('sub_button')) then
+                    if (jos1.get('sub_button').is_array) then
+                        jolist_tmp := json_list(jos1.get('sub_button'));
+                        IF jolist_tmp.count<=0 THEN
+                           json_ext.remove(jo, 'button[' || v || '].sub_button');
+                           if (jos1.get('type').get_string = 'view') then
+                              v_fid     := jos1.get('fromid').get_number;
+                              v_replace := jos1.get('objid').get_string;
+                              SELECT t.purl
+                              INTO v_url
+                              FROM wx_v_jumpurlpath t
+                              WHERE t.id = v_fid;
+                              IF v_url IS NULL THEN
+                                  v_url1 := v_replace;
+                              ELSE
+															    --v_url1 :=replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '));
+                                  v_url1 :=v_sr1||case when v_publictype='4'
+                                                then replace(apex_util.url_encode(replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))),'%2E','.')
+                                                else replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))
+                                           end
+                                ||v_sr2;
+                              END IF;
+                              json_ext.remove(jo, 'button[' || v || '].key');
+                              json_ext.put(jo, 'button[' || v || '].url', v_url1);
+                          end if;
+                          json_ext.remove(jo, 'button[' || v || '].fromid');
+                          json_ext.remove(jo, 'button[' || v || '].objid');
+                          json_ext.remove(jo, 'button[' || v || '].menuType');
+                        ELSE
+                          FOR j IN 1 .. jolist_tmp.count LOOP
+                              jos1 := json(jolist_tmp.get_elem(j));
+                              if (jos1.get('type').get_string = 'view') then
+                                  v_fid     := jos1.get('fromid').get_number;
+                                  v_replace := jos1.get('objid').get_string;
+                                  SELECT t.purl
+                                  INTO v_url
+                                  FROM wx_v_jumpurlpath t
+                                  WHERE t.id = v_fid+ad_clientid and t.AD_CLIENT_ID=ad_clientid;
+                                  IF v_url IS NULL THEN
+                                      v_url1 := v_replace;
+                                  ELSE
+																	    --v_url1 :=replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '));
+                                      v_url1 := v_sr1||case when v_publictype='4'
+                                                then replace(apex_util.url_encode(replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))),'%2E','.')
+                                                else replace(nvl(v_domain||v_url,''), '@ID@', nvl(v_replace, ' '))
+                                           end
+                                           ||v_sr2;
+                                  END IF;
+                                  -- remove key
+                                  json_ext.remove(jo,
+                                                  'button[' || v ||
+                                                  '].sub_button[' || j || '].key');
+                                  json_ext.remove(jo,
+                                                  'button[' || v ||
+                                                  '].sub_button[' || j ||
+                                                  '].fromid');
+                                  json_ext.remove(jo,
+                                                  'button[' || v ||
+                                                  '].sub_button[' || j ||
+                                                  '].objid');
+                                  json_ext.put(jo,
+                                               'button[' || v || '].sub_button[' || j ||
+                                               '].url',
+                                               v_url1);
+                              end if;
+                          json_ext.remove(jo,
+                                                  'button[' || v ||
+                                                  '].sub_button[' || j ||
+                                                  '].menuType');
+                          end loop;
+                       END IF;
+                    end if;
+                end if;
+            end loop;
+            --  jo.print;
+        end if;
+    end if;
+    return jo.to_char(false);
+end;
+
+/
+create or replace procedure wx_order_accept(p_user_id in number,
+
+                                            p_query   in varchar2,
+                                            r_code    out number,
+                                            r_message out varchar2) as
+    type t_queryobj is record(
+        tableid number(10),
+        query   varchar2(32676),
+        id      varchar2(10));
+    v_queryobj t_queryobj;
+    type t_selection is table of number(10) index by binary_integer;
+    v_selection t_selection;
+    st_xml      varchar2(32676);
+    v_xml       xmltype;
+		p_integral_ratio number(10);
+		p_isOffline      char(1):='N';
+		p_vipId          number(10);
+		p_orderState     number(10);
+		p_openid         varchar(100);
+    p_id number(10);
+		p_integral number(10);
+		p_paycode  varchar2(100);
+		v_couponemploy_id  number(10);
+begin
+    -- 从p_query解析参数
+    st_xml := '<data>' || p_query || '</data>';
+    --raise_application_error(-20014, st_xml);
+    v_xml := xmltype(st_xml);
+    select extractvalue(value(t), '/data/table'),
+           extractvalue(value(t), '/data/query'),
+           extractvalue(value(t), '/data/id')
+    into   v_queryobj
+    from   table(xmlsequence(extract(v_xml, '/data'))) t;
+    select extractvalue(value(t), '/selection') bulk collect
+    into   v_selection
+    from   table(xmlsequence(extract(v_xml, '/data/selection'))) t;
+    p_id := v_queryobj.id;
+		select o.wx_vip_id,o.sale_status,o.wx_couponemploy_id
+		into p_vipId,p_orderState,v_couponemploy_id
+		from wx_order o
+		where o.id=p_id;
+		--判断是否已收货过
+		if p_orderState=5 then
+		   raise_application_error(-20201,'此单已收货，不能重复收货！');
+		end if;
+		--更新单据状态
+    update wx_order t set t.sale_status = '5' where t.id = p_id;
+    --查询下单会员所属VIP类型的积分比例
+		begin
+				select to_number(nvl(vb.integralconvert,0))
+				into p_integral_ratio
+				from wx_vipbaseset vb
+				where vb.id=(select v.viptype from wx_vip v where v.id=p_vipId);
+		exception when others then
+		    p_integral_ratio:=0;
+		end;
+		--获取订单支付方式，如果为积分支付，则不需要产生积分
+		begin
+			select p.pcode
+			into p_paycode
+			from wx_pay p
+			where p.id=(select o.payment from wx_order o where o.id=p_id);
+		exception when others then
+		  p_paycode:='';
+		end;
+		--如果公司未接通线下，则产生积分流水与消弱记录
+		select ifs.iserp
+		into p_isOffline
+		from wx_interfaceset ifs
+		where ifs.ad_client_id=(select o.ad_client_id from wx_order o where o.id=p_id);
+		/*if nvl(trim(v_couponemploy_id),null) is not null then
+				--修改优惠券状态
+				update wx_couponemploy cm set cm.state='Y' where cm.id=v_couponemploy_id;
+		end if;*/
+		if p_isOffline='N' then --and nvl(p_paycode,'')<>'integral'
+			 --判断积分是否大于0
+			 --计算积分
+			 select decode(o.ordertype,'3',-o.amt_integral,to_number(decode(p_integral_ratio,0,0,o.tot_amt/p_integral_ratio)))
+			 into p_integral
+			 from wx_order o where o.id=p_id;
+			 if p_integral>0 then
+			     --插入VIP积分流水
+					 insert into wx_integral
+										(id, ad_client_id, ad_org_id, wx_vip_id, wx_order_id, docno, saledate, c_store_id, amt, integral,
+										 integraltype, ownerid, modifierid, creationdate, modifieddate, isactive, wechatno, remark)
+										select get_sequences('wx_integral'), o.ad_client_id, o.ad_org_id, p_vipId, null, get_sequenceno('INGR', o.ad_client_id),
+													 to_number(to_char(sysdate, 'YYYYMMDD')), null, 0,p_integral, 1, o.ownerid,
+													 o.modifierid, sysdate, sysdate, 'Y', v.wechatno, '由订单'||o.docno||'产生'
+										from   wx_order o join wx_vip v on v.id=o.wx_vip_id
+										where  o.id=p_id;
+					 --修改会员总积分
+					 update wx_vip v set v.integral=nvl(v.integral,0)+p_integral
+					 where v.id=p_vipId;
+			 end if;
+			 --更新会员消费信息
+			 update wx_vip v set (v.orderqty,v.productqty,v.totalprice)=
+			 (select nvl(v.orderqty,0)+1,nvl(v.productqty,0)+nvl(o.tot_qty,0),nvl(v.totalprice,0)+o.tot_amt from wx_order o where o.id=p_id);
+		end if;
+		--插入VIP消费记录
+	  insert into wx_deal
+						(id, ad_client_id, ad_org_id, wx_vip_id, wx_order_id, dealtype, dealamt, lastamt, useintegral, description,
+						 ownerid, modifierid, creationdate, modifieddate, isactive, wechatno, docno, saledate)
+						select get_sequences('wx_deal'), v.ad_client_id, v.ad_org_id, v.id,o.id,'线上消费',o.tot_amt,v.lastamt,
+										nvl(o.amt_integral,0),'由订单'||o.docno||'产生',
+									 v.ownerid, v.modifierid, sysdate, sysdate, 'Y', v.wechatno, null,
+									 to_number(to_char(sysdate,'yyyymmdd'))
+						from   wx_order o join wx_vip v on v.id=o.wx_vip_id
+						where  o.id=p_id;
+end;
+
+/
+create or replace function wx_productcategory_$r_savejson(p_user_id IN NUMBER,f_data in varchar)
+
+    return varchar2 is
+    f_data_ja      json_list;
+		f_result_jo    json:=new json();
+    f_temp_data_jo json;
+		f_cid          number(10);
+		f_pcid         number(10);
+		f_operate      varchar2(100);
+		f_ids          varchar2(1000);
+		f_pcname       varchar2(1000);
+		f_pcanmes      varchar2(4000);
+begin
+    begin
+        f_data_ja := json_list(f_data);
+    exception when others then
+		    f_result_jo.put('code',-1);
+		    f_result_jo.put('data',f_ids);
+		    return f_result_jo.to_char;
+        --f_data_ja := new json_list();
+    end;
+    for i in 1 .. f_data_ja.count loop
+        f_temp_data_jo := json(f_data_ja.get_elem(i));
+        if f_temp_data_jo.exist('id')=false then
+				   continue;
+				end if;
+				f_pcid:=f_temp_data_jo.get('id').get_number;
+				if f_temp_data_jo.exist('operate')=false then
+				   continue;
+				end if;
+				f_operate:=f_temp_data_jo.get('operate').get_string;
+				if f_operate is null then
+				   continue;
+				end if;
+				if f_temp_data_jo.exist('categoryid')=false then
+				   continue;
+				else
+				   f_cid:=f_temp_data_jo.get('categoryid').get_number;
+					 if trim(f_cid) is null then
+					    continue;
+					 end if;
+				end if;
+				if lower(f_operate)='add' then
+				   if f_pcid=-1 then
+					    f_pcid:=get_sequences('WX_PRODUCTCATEGORY');
+							INSERT INTO wx_productcategory
+									(id, ad_client_id, ad_org_id, creationdate,
+									 modifieddate, isactive, wx_itemcategoryset_id,ownerid,modifierid)
+							SELECT f_pcid, u.ad_client_id, u.ad_org_id, SYSDATE, SYSDATE, 'Y',trim(f_cid),p_user_id,p_user_id
+							FROM users u
+							WHERE u.id=p_user_id;
+					 end if;
+			  elsif lower(f_operate)='delete' then
+				      delete from wx_productcategory pc where pc.id=f_pcid;
+							continue;
+				end if;
+				if f_ids is not null then
+				   f_ids:=f_ids||',';
+				end if;
+				f_ids:=f_ids||f_pcid;
+    end loop;
+		f_result_jo.put('code',0);
+		f_result_jo.put('data',f_ids);
+		return f_result_jo.to_char;
+end;
+
+/
+create or replace PROCEDURE wx_pay_acm(p_id IN NUMBER) AS
+
+    -------------------------------------------------------------------------
+    --add by zwm 20140418
+    --判断支付方式是否已被引用
+    -------------------------------------------------------------------------
+    v_count NUMBER(10);
+		v_isdefault varchar2(10);
+		v_adclient_id number(10);
+BEGIN
+    --获取当前记录支付方式
+		select nvl(p.isdefault,'N'),p.ad_client_id
+		into v_isdefault,v_adclient_id
+		from wx_pay p
+		where p.id=p_id;
+		--如果当前记录不是默认支付方式
+		if v_isdefault='N' then
+				--判断是否有默认支付方式
+				begin
+						select count(1)
+						into v_count
+						from wx_pay p
+						where p.ad_client_id=v_adclient_id
+						and p.isdefault='Y';
+				exception when others then
+						v_count:=0;
+				end;
+				--没有时修改一条记录为默认支付方式
+				if v_count=0 then
+					 update wx_pay p set p.isdefault='Y' where rownum=1;
+				end if;
+		else
+		    --修改其它默认支付方式为非默认支付方式
+				update wx_pay p set p.isdefault='N' where p.ad_client_id=v_adclient_id and p.id<>p_id;
+		end if;
+END;
+
+/
+create or replace function getsendsmscount(f_company_id in number)
+
+    return number is
+    f_sendsmscount number(10);
+begin
+    select count(1)
+    into   f_sendsmscount
+    from   u_message e
+		where    e.ad_client_id=f_company_id
+    and    e.state = 2;
+    return f_sendsmscount;
+end;

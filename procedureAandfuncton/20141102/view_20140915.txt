@@ -1,0 +1,7 @@
+--paco add begin  20140915
+SET echo off;
+SET heading off;
+SET feedback off;
+spool E:\Works\build_info\procedureAandfuncton\view.sql;
+
+spool off;
