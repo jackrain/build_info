@@ -1,5 +1,9 @@
 ﻿-- paco create or replace function/procedure begin
+--群发或单发微信消息
+wx_notifyrecode_acm
 
+--群发微信消息时自动任务获取数据
+wx_notifyrecode_massreply
 
 -- paco create or replace function/procedure end
 
