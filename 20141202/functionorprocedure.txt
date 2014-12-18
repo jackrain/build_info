@@ -1,0 +1,40 @@
+﻿-- paco create or replace function/procedure begin
+--群发或单发微信消息
+wx_notifyrecode_acm
+
+--群发微信消息时自动任务获取数据
+wx_notifyrecode_massreply
+
+--优惠券核销功能：添加存储过程：
+wx_cancelcouponitem_acm;
+WX_CANCELCOUPONSUBMIT;
+
+--会员表新增是否取消关注字段，新增是从中间表复制
+wx_vip_inqury_ac;
+
+--商品所有分类时获取和保存方法的修改
+wx_productcategory_$r_getjson
+wx_productcategory_$r_savejson;
+
+--商品分类设置的ACM
+wx_itemcategoryset_acm;
+wx_itemcategoryset_ac;
+wx_itemcategoryset_am;
+
+--商品规格在商品新增时可编辑
+wx_appendgoods_ac;
+wx_v_cost_appendgoods_ac;
+
+--商品规格在新增时返回ID
+wx_alias_$r_json;
+wx_alias_$w_modifyorcreate;
+
+--删除所有商品属性规格
+wx_productcategory_$w_delete;
+
+-- paco create or replace function/procedure end
+
+-- zhoutao create or replace function/procedure begin
+
+
+-- zhoutao create or replace function/procedure end

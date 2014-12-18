@@ -1,0 +1,75 @@
+--paco alter table begin
+
+--微信消息数据表约束
+alter table WX_TOWXMESSAGE
+  add primary key (ID);
+
+  
+--微信消息数据明细表约束
+alter table WX_TOWXMESSAGEITEM
+  add primary key (ID);
+alter table WX_TOWXMESSAGEITEM
+  add constraint FK_WX_TOWXMESSAGEITEM_114525 foreign key (WX_TOWXMESSAGE_ID)
+  references WX_TOWXMESSAGE (ID) on delete set null;
+
+--群发记录表约束
+alter table WX_NOTIFYRECODE add primary key (ID);
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114477 foreign key (WX_TOWXMESSAGE_ID)
+  references WX_TOWXMESSAGE (ID) on delete set null;
+alter table WX_NOTIFYRECODE
+  add constraint FK_WX_NOTIFYRECODE_114482 foreign key (WX_MESSGAE_ID)
+  references WX_MESSGAE (ID) on delete set null;
+
+
+--充值记录增加支付时间
+alter table WX_RECHARGERECORD add PAYTIME DATE NULL;
+update wx_rechargerecord rr set rr.paytime=rr.modifieddate where rr.state='TRADE_SUCCESS';
+
+--会员中间表新增 微信唯一、国家、省份、城市字段
+alter table WX_VIP_INQURY add unionid varchar2(100);
+alter table WX_VIP_INQURY add country varchar2(100);
+alter table WX_VIP_INQURY add province varchar2(100);
+alter table WX_VIP_INQURY add city varchar2(100);
+
+--会员中间表增加创建时间与修改时间为当前时间
+alter table WX_VIP_INQURY modify creationdate default sysdate;
+alter table WX_VIP_INQURY modify modifieddate default sysdate;
+
+
+--券核销索引
+CREATE UNIQUE INDEX AK_WX_CANCELCOUPON ON WX_CANCELCOUPON(DOCNO, AD_CLIENT_ID);
+CREATE INDEX IX_WX_CANCELCOUPON_01 ON WX_CANCELCOUPON(status);
+
+  
+--券核销关联关系
+alter table WX_CANCELCOUPON add constraint fk_WX_CANCELCOUPON_113822 foreign key (WX_STORE_ID)
+  references WX_STORE(ID) on delete set null;
+  
+--券核销明细关联关系
+alter table WX_CANCELCOUPONITEM add constraint fk_WX_CANCELCOUPONITEM_113901 foreign key (WX_CANCELCOUPON_ID)
+  references WX_CANCELCOUPON(ID) on delete cascade;
+alter table WX_CANCELCOUPONITEM add constraint fk_WX_CANCELCOUPONITEM_113903 foreign key (WX_COUPONEMPLOY_ID)
+  references WX_COUPONEMPLOY(ID) on delete set null;
+
+--会员表添加是否取消关注字段
+alter table WX_VIP add IFCANCLEATTENTION char(1) default 'N';
+update wx_vip v set v.IFCANCLEATTENTION=(select nvl(vi.issubscribe,'N') from wx_vip_inqury vi where vi.wx_vip_id=v.id);
+
+--商品所属分类增加显示名称字段
+alter table wx_productcategory add name varchar2(200);
+
+--文章表增加作者字段
+alter table WX_ISSUEARTICLE add AUTHOR VARCHAR2(50);
+
+--paco alter table end
+
+--zhoutao alter table begin
+
+
+--zhoutao alter table end
+
+--huangchunyang alter table begin
+
+
+--huang chunyang alter table end

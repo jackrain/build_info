@@ -1,0 +1,9 @@
+--paco add begin  20140915
+SET echo off;
+SET heading off;
+SET feedback off;
+spool E:\Works\build_info\procedureAandfuncton\view.sql;
+
+--群发时用到视图，增加WECHATNO(openid)字段
+wi_vippro;
+spool off;

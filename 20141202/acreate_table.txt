@@ -1,0 +1,122 @@
+--paco create table begin
+--新的群发功能用到的表
+if EXISTS(SELECT * FROM sys.tables WHERE name = 'WX_NOTIFYRECODE') then
+   drop table WX_NOTIFYRECODE;
+end if;
+create table WX_NOTIFYRECODE
+(
+  id                NUMBER(10) not null,
+  ad_client_id      NUMBER(10),
+  ad_org_id         NUMBER(10),
+  wx_messgae_id     NUMBER(10),
+  wx_towxmessage_id NUMBER(10),
+  massopenid        CLOB not null,
+  senddate          DATE,
+  type              CHAR(1) not null,
+  state             CHAR(1) default 'N',
+  content           CLOB,
+  errcount          NUMBER(10),
+  errorlog          VARCHAR2(1000),
+  ownerid           NUMBER(10),
+  modifierid        NUMBER(10),
+  creationdate      DATE,
+  modifieddate      DATE,
+  isactive          CHAR(1) default 'Y' not null
+);
+
+--微信消息数据
+if EXISTS(SELECT * FROM sys.tables WHERE name = 'WX_TOWXMESSAGEITEM') then
+   drop table WX_TOWXMESSAGEITEM;
+end if;
+create table WX_TOWXMESSAGEITEM
+(
+  id                NUMBER(10) not null,
+  ad_client_id      NUMBER(10),
+  ad_org_id         NUMBER(10),
+  wx_towxmessage_id NUMBER(10),
+  author            VARCHAR2(255),
+  picurl            VARCHAR2(255),
+  tourl             VARCHAR2(255),
+  thumbnail         VARCHAR2(255),
+  title             VARCHAR2(1000),
+  content           CLOB,
+  description       VARCHAR2(500),
+  isshowcover       VARCHAR2(255),
+  fromid            NUMBER(10),
+  objid             VARCHAR2(500),
+  sort              VARCHAR2(255),
+  ownerid           NUMBER(10),
+  modifierid        NUMBER(10),
+  creationdate      DATE,
+  modifieddate      DATE,
+  isactive          CHAR(1) default 'Y' not null
+);
+
+--微信消息数据明细
+if EXISTS(SELECT * FROM sys.tables WHERE name = 'WX_TOWXMESSAGE') then
+   drop table WX_TOWXMESSAGE;
+end if;
+create table WX_TOWXMESSAGE
+(
+  id           NUMBER(10) not null,
+  ad_client_id NUMBER(10),
+  ad_org_id    NUMBER(10),
+  messagetype  VARCHAR2(255),
+  messagecount NUMBER(10),
+  title        VARCHAR2(255),
+  content      CLOB,
+  description  VARCHAR2(1000),
+  url          VARCHAR2(255),
+  hurl         VARCHAR2(255),
+  thumbnail    VARCHAR2(255),
+  fromid       NUMBER(10),
+  objid        VARCHAR2(500),
+  contentjson  CLOB,
+  ownerid      NUMBER(10),
+  modifierid   NUMBER(10),
+  creationdate DATE,
+  modifieddate DATE,
+  isactive     CHAR(1) default 'Y' not null
+);
+
+--券核销(上海)
+CREATE TABLE WX_CANCELCOUPON(
+    ID NUMBER(10)  NOT NULL ,
+    AD_CLIENT_ID NUMBER(10) ,
+    AD_ORG_ID NUMBER(10) ,
+    DOCNO VARCHAR2(100)  NOT NULL ,
+    WX_STORE_ID NUMBER(10)  NOT NULL ,
+    STATUS NUMBER(10)  DEFAULT 1,
+    OWNERID NUMBER(10) ,
+    MODIFIERID NUMBER(10) ,
+    CREATIONDATE DATE ,
+    MODIFIEDDATE DATE ,
+    ISACTIVE CHAR(1)  DEFAULT 'Y' NOT NULL ,
+    PRIMARY KEY (ID));
+
+--添加核销明细表：
+CREATE TABLE WX_CANCELCOUPONITEM(
+    ID NUMBER(10)  NOT NULL ,
+    AD_CLIENT_ID NUMBER(10) ,
+    AD_ORG_ID NUMBER(10) ,
+    WX_CANCELCOUPON_ID NUMBER(10)  NOT NULL ,
+    WX_COUPONEMPLOY_ID NUMBER(10)  NOT NULL ,
+    OWNERID NUMBER(10) ,
+    MODIFIERID NUMBER(10) ,
+    CREATIONDATE DATE ,
+    MODIFIEDDATE DATE ,
+    ISACTIVE CHAR(1)  DEFAULT 'Y' NOT NULL ,
+    PRIMARY KEY (ID));
+
+
+--paco create table end
+
+--zhoutao create table begin
+
+
+--zhoutao create table end
+
+--huangchunyang create table begin
+
+
+--huang chunyang create table end
