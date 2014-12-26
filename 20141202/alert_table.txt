@@ -62,6 +62,10 @@ alter table wx_productcategory add name varchar2(200);
 --文章表增加作者字段
 alter table WX_ISSUEARTICLE add AUTHOR VARCHAR2(50);
 
+--订单增加发货时间字段
+alter table wx_order add SENDTIME date;
+update wx_order o set o.sendtime=o.modifieddate where o.sale_status>2;
+
 --paco alter table end
 
 --zhoutao alter table begin

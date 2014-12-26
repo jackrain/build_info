@@ -21,16 +21,54 @@ wx_itemcategoryset_acm;
 wx_itemcategoryset_ac;
 wx_itemcategoryset_am;
 
---商品规格在商品新增时可编辑
-wx_appendgoods_ac;
-wx_v_cost_appendgoods_ac;
-
 --商品规格在新增时返回ID
 wx_alias_$r_json;
 wx_alias_$w_modifyorcreate;
 
 --删除所有商品属性规格
 wx_productcategory_$w_delete;
+
+--修改订单0支付时传入的参数从订单编号改为订单ID
+wx_order_destocke;
+
+--创建订单方法
+wx_order_create;
+
+--修改如果订单优惠券金额大于订单金额时，订单金额为0;
+wx_orderitem_acm;
+wx_orderitem_bd;
+
+--订单付款前判断库存是否足够
+wx_order_verifyorderstock;
+
+--修改为订单下单减库存(以前是支付成功减库存)
+wx_order_destocking;
+
+--普通商品与积分商品所属分类逻辑改变
+wx_appendgoods_ac;
+wx_appendgoods_am;
+wx_v_cost_appendgoods_ac;
+wx_v_cost_appendgoods_am;
+
+--发货时修改订单中的发货时间
+wx_order_send;
+
+--批量发货时修改订单发货时间
+wx_order_send_list;
+
+--商品新增时不再有默认规格
+wx_alias_bd;
+wx_alias_$r_json;
+wx_alias_$r_phonejson;
+
+--批量删除购物车
+wx_shopping_delete_list;
+
+--自动取消1小时未付款的订单
+WX_ORDER_AUTOCANCEL;
+
+--自动收货发货10后的订单
+WX_ORDER_AUTORECEIVE;
 
 -- paco create or replace function/procedure end
 
